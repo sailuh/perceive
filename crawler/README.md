@@ -16,3 +16,7 @@ The user just needs to alter these three variables in order to extract specific 
 
 Example: To extract data from 2005 to 2007, Jan through June please set the "i" (year) variable to 4:6, "j" (month) to 1:6. The crawler creates .txt files each email with the naming convention Year_Month_documentNumber. A .csv file is created for each month that contains data regarding the author name, title, dateStamp. 
 
+Make these changes to customize the crawler 
+for(i in 4:6){}
+for(j in 1:6){}
+
