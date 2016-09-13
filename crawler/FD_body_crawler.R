@@ -57,8 +57,8 @@ for (i in years){
       }
       
       # Extract individual cases
-      #for(k in 0:(iterations-1)){
-      for(k in 75:76){
+      for(k in 0:(iterations-1)){
+      #for(k in 75:76){
          tryCatch(   
          doc <- read_html(paste0("http://seclists.org/fulldisclosure/", as.character(i), "/", months_names[j],"/", as.character(k))),
          error = function(e){NA}
