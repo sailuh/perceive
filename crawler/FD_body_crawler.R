@@ -1,12 +1,34 @@
 require(XML)
-require(magrittr) # For writing pipeline commands
-require(rvest) # For web scraping
-require(gsubfn) #For string manipulation
+require(magrittr)
+require(rvest)
+require(gsubfn)
 
-# For creating the month's variable in the format
+
 months_names <- format(ISOdatetime(2000,1:12,1,0,0,0),"%b")
-years <- c(2002:2016)
+startYear <- function(){
+   sy <- readline(prompt = "Enter starting year as integer (YYYY):")
+   return(as.integer(sy))
+}
+   
+endYear <- function(){
+   ey <- readline(prompt = "Enter ending year as integer (YYYY):")
+   return(as.integer(ey))
+}
 
+years <- c(startYear():endYear())
+
+startMonth<-function(){
+   sm <- readline(prompt = "Enter month number of starting month (range 1 to 12):")
+   return(as.integer(sm))
+}
+
+
+endMonth<-function(){
+   em <- readline(prompt = "Enter month number of ending month (range 1 to 12):")
+   return(as.integer(em))
+}
+
+months<-c(startMonth():endMonth())
 # Set up the URL
 url<- "http://seclists.org/fulldisclosure/"
 
@@ -19,29 +41,26 @@ tab <- tab[,-1]
 names(tab)<- c(months_names)
 
 
-#default years loop - covers all 15 years
+#  years loop
 #for (i in 1:length(years)){
-  
-#customized year loop: type in year number from starting from 2002    
-for (i in 1:5){
-      
-   #Default  Months loop covers all 12 months in that year
-   #for(j in 1:length(months_names)){
    
-   # customized months loop eg: for jan to june input month numbers 1 to 6
-   for(j in 1:6){
+for (i in years){
+      
+   # Months loop
+   #for(j in 1:length(months_names)){
+    for(j in months){
       flag=0;
       # Number of cases in each month saved in iteration variable
-      iterations <- tab[as.character(years[i]), months_names[j]]
+      iterations <- tab[as.character(i), months_names[j]]
       if(is.na(iterations)){
          next
       }
       
       # Extract individual cases
-      for(k in 0:(iterations-1)){
-      #for(k in 75:80){
+      #for(k in 0:(iterations-1)){
+      for(k in 75:76){
          tryCatch(   
-         doc <- read_html(paste0("http://seclists.org/fulldisclosure/", as.character(years[i]), "/", months_names[j],"/", as.character(k))),
+         doc <- read_html(paste0("http://seclists.org/fulldisclosure/", as.character(i), "/", months_names[j],"/", as.character(k))),
          error = function(e){NA}
          
          )
@@ -51,7 +70,7 @@ for (i in 1:5){
          
          text_body <- gsub('[\n|+]',' ', text_body) 
          
-         write(text_body[1], file = paste0(years[i], "_", months_names[j],"_", k, ".txt"))
+         write(text_body[1], file = paste0(i, "_", months_names[j],"_", k, ".txt"))
          
          
          #Email title
@@ -70,7 +89,7 @@ for (i in 1:5){
          }
          
          # Data form one iteration
-         entry = data.frame(years[i],months_names[j],k,title,author,dateStamp)
+         entry = data.frame(i,months_names[j],k,title,author,dateStamp)
          Sys.sleep(3*runif(1))
          if(k %% 25 == 0){
             Sys.sleep(3*runif(1))
@@ -89,7 +108,7 @@ for (i in 1:5){
          Sys.sleep(0.5)
          Sys.sleep(2*runif(1))
          }
-      write.csv(mail_table, file = paste0("Full_Disclosure_Mailing_List_", months_names[j],years[i], ".csv"))
+      write.csv(mail_table, file = paste0("Full_Disclosure_Mailing_List_", months_names[j],i, ".csv"))
       Sys.sleep(5)
    }
    
