@@ -4,6 +4,10 @@ The script can be run as is. Follow the prompts on the screen to customize the d
 
 The script creates a directory for each year & each month and saves the Bugtraq records. There is also a Monthly aggregated .csv file 
 
+User inputs -
+1. User can change starting year & ending year through the prompts while running the script
+2. User can also change starting and ending month numbers through the prompts on the scripts
+
 Changes to be made to reuse the crawler for scraping other seclists data
 
 1. Line 34 - Change 'bugtraq' to new crawler url 
