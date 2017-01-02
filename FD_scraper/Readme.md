@@ -12,11 +12,3 @@ There are three user configurable variables that can be set to configure the cra
 
 “ k ” (records parameter) – This variable can be altered to extract specific records within each month. By default, it has been set to iterate from 0 to the ending record in each month. For example, in order to extract records from 480 to the ending, we need to set the “ k ” variable to 480 to the end ( ‘ iterations -1 ’).
 
-The user just needs to alter these three variables in order to extract specific set of records within each year for a particular month.
-
-Example: To extract data from 2005 to 2007, Jan through June please set the "i" (year) variable to 4:6, "j" (month) to 1:6. The crawler creates .txt files each email with the naming convention Year_Month_documentNumber. A .csv file is created for each month that contains data regarding the author name, title, dateStamp. 
-
-Make these changes to customize the crawler 
-for(i in 4:6){}
-for(j in 1:6){}
-
