@@ -53,7 +53,6 @@ for (i in years){
       # Number of cases in each month saved in iteration variable
       iterations <- tab[as.character(i), months_names[j]]
       if(is.na(iterations)){
-         paste0("In year ", years[i], " there is no data for month of ", months_names[j])
          next
       }
       
@@ -61,7 +60,6 @@ for (i in years){
       subDir <- months_names[j]
       dir.create(file.path(mainDir, subDir))
       setwd(file.path(mainDir, subDir))
-      paste(months_names[j], "started, total record count is", iterations, sep = " ")
       # Extract individual cases
       for(k in 0:(iterations-1)){
          tryCatch(   
@@ -98,7 +96,6 @@ for (i in years){
          names(entry)[1]<- "years.i."
          Sys.sleep(3*runif(1))
          if(k %% 25 == 0){
-            paste0("Taking a small break at record no. ", k, " in ", months_names[j])
             Sys.sleep(3*runif(1))
             Sys.sleep(1*runif(1))
          }
@@ -114,8 +111,7 @@ for (i in years){
          #Introduced to produce a delay - so that our IP isn't blocked
          Sys.sleep(0.5)
          Sys.sleep(2*runif(1))
-         paste(years[i], months_names[j], "extarcted data", k, "records out of", iterations, "records", sep = " ")
-         
+        
       }
       write.csv(mail_table, file = paste0("Bugtraq_Mailing_List_", months_names[j],i, ".csv"),row.names = F)
       Sys.sleep(5)
