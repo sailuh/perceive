@@ -1,5 +1,9 @@
 Crawlers
 
+Dependencies 
+
+packages - rvest, magrittr, gsubfn
+
 # PERCIEVE
 Steps to execute the R code:
 
@@ -12,3 +16,8 @@ There are three user configurable variables that can be set to configure the cra
 
 “ k ” (records parameter) – This variable can be altered to extract specific records within each month. By default, it has been set to iterate from 0 to the ending record in each month. For example, in order to extract records from 480 to the ending, we need to set the “ k ” variable to 480 to the end ( ‘ iterations -1 ’).
 
+Changes to be made to reuse this script for other seclists crawlers
+
+1. change base url 
+2.
+3. 
