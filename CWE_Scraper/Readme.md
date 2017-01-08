@@ -5,9 +5,9 @@ Incase there is a new version available on the CWE archive, please change the in
 
 Node Filtering: 
 
-1. In Line 41 we are filtering the weakness nodes that only have a relationship of the type 'Weakness Class' from among the various categories like Weakness Class, Category, Views etc 
+1. In Line 41 we are filtering the weakness nodes that only of the type 'Weakness Class' from among the various categories like Weakness Class, Category, Views etc 
 
-2. In Line 43 we are filtering the weakness nodes that are only of the relationship type 'Category' from among the various other relation types Weakness class, Category, Views etc 
+2. In Line 43 we are filtering the weakness nodes that are only of the type 'Category' from among the various other relation types Weakness class, Category, Views etc 
 
 The following variables have been included in the node list because they are attributes unique to each specific weakness in the CWE database:
 
