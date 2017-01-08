@@ -4,6 +4,7 @@ For this script I have used the cwec_v2.9.xml file from the CWE archives
 Incase there is a new version available on the CWE archive, please change the input file on line 8
 
 Node Filtering: 
+
 1. In Line 41 we are filtering the weakness nodes that only have a relationship of the type 'Weakness Class' from among the various categories like Weakness Class, Category, Views etc 
 
 2. In Line 43 we are filtering the weakness nodes that are only of the relationship type 'Category' from among the various other relation types Weakness class, Category, Views etc 
