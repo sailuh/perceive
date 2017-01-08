@@ -12,13 +12,18 @@ Node Filtering:
 The following variables have been included in the node list because they are attributes unique to each specific weakness in the CWE database:
 
 i) Weakness ID : unique ID in the CWE database that identifies the weakness
+
 ii) Weakness Name: unique name given to the weakness
+
 iii) Weakness Description: Description about the weakness
+
 iv) CAPEC ID for related attacks: Links to the CAPEC ID for related attack patterns for the weakness
 
 The following variables have been included in the Edge  list to define edge relationship between the nodes:
 i) Source: Weakness ID of the source for the relationship
+
 ii) Target: Weakness ID of the destination node in the relationship
+
 iii) Relationship type: Type of relationship between the nodes ( Childof, ParentOF, SameAs, Is Preceded By, etc)
 
 There is no need to change or set any parameters, just install the required packages and run the script as is. 
