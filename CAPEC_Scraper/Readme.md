@@ -5,6 +5,29 @@ For this script capec_v2.8.xml was user, In case there is a newer version availa
 
 In Line 9 of the code, we are filtering the xml nodes that are only of the type 'Attack Pattern' hence extracting data only for the required fields. 
 
+The nodelist contains variables that are unique to every attack pattern. The variables included are as follows:
+
+1. ID
+
+2. Name
+
+3. Summary
+
+4. Typical Severity
+
+5. Typical_Likelihood of exploit
+
+6. Attack Prerequisit
+
+7. Methods of Attack 
+
+8. Related Weakness CWE ID
+
+
+
+The edgelist contains information about the Source CAPEC ID, Target CAPEC ID anf the relationship type between the Attack Patterns. 
+
+
 The script can be run as is. There are 3 output files for the script:
   1. Attack Pattern Data.csv : Contains all extracted data from the XML document
   2. Nodelist.csv : Contains Node table that can be directly loaded into Gephi
