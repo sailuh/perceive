@@ -20,6 +20,8 @@ User can change starting year & ending year through the prompts while running th
 User can also change starting and ending month numbers through the prompts on the scripts
 Changes to be made to reuse the crawler for scraping other seclists data
 
-Line 34 - Change 'fulldisclosure' to new crawler url
-Line 66 - In the trycatch command change 'fulldisclosure' to new crawler url
-Line 116 - While writing output file change filename in write.csv from 'fulldisclosure' to new crawler name
+Line 32 - Change 'fulldisclosure' to new crawler url
+
+Line 62 - In the trycatch command change 'fulldisclosure' to new crawler url
+
+Line 110 - While writing output file change filename in write.csv from 'fulldisclosure' to new crawler name
