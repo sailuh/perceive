@@ -1,4 +1,3 @@
-require(XML)
 require(magrittr)
 require(rvest)
 require(gsubfn)
@@ -62,8 +61,8 @@ for (i in years){
          tryCatch(   
          doc <- read_html(paste0("http://seclists.org/fulldisclosure/", as.character(i), "/", months_names[j],"/", as.character(k))),
          error = function(e){NA}
-         
          )
+         
          Sys.sleep(2*runif(1))
          
          text_body <- doc %>% html_nodes(xpath = "/html/body/table[2]//tr[1]/td[2]/table//tr/td//pre |/html/body/table[2]//tr[1]/td[2]/table//tr/td/tt") %>% html_text(trim= T) %>% paste(collapse = '') 
