@@ -23,12 +23,13 @@ The nodelist contains variables that are unique to every attack pattern. The var
 
 8. Related Weakness CWE ID
 
-
+Link to CAPEC data repository: https://mega.nz/#F!7JEnESzY!_1RDa8xqyqeny3evsU1VLQ
 
 The edgelist contains information about the Source CAPEC ID, Target CAPEC ID anf the relationship type between the Attack Patterns. 
-
 
 The script can be run as is. There are 3 output files for the script:
   1. Attack Pattern Data.csv : Contains all extracted data from the XML document
   2. Nodelist.csv : Contains Node table that can be directly loaded into Gephi
   3. Edgelist.csv : COntains Edge table that can be directly loaded into Gephi
+
+
