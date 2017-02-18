@@ -9,6 +9,9 @@ Node Filtering:
 
 2. In Line 43 we are filtering the weakness nodes that are only of the type 'Category' from among the various other relation types Weakness class, Category, Views etc 
 
+
+Link to CWE data repository: https://mega.nz/#F!3EcREZKT!DyMDU9ptzzD00Gyh8aZuSQ
+
 The following variables have been included in the node list because they are attributes unique to each specific weakness in the CWE database:
 
 i) Weakness ID : unique ID in the CWE database that identifies the weakness
