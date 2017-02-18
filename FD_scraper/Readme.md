@@ -26,6 +26,7 @@ Line 62 - In the trycatch command change 'fulldisclosure' to new crawler url
 
 Line 110 - While writing output file change filename in write.csv from 'fulldisclosure' to new crawler name
 
+Link to raw data for FD: https://mega.nz/#F!iFdlkQKK!9EFzYq6CptBJtTdCOaY7ew 
 
 
 Meta data for node & edge list in Gephi:
