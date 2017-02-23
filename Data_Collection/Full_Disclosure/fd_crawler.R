@@ -1,7 +1,13 @@
 require(magrittr)
 require(rvest)
 require(gsubfn)
+require(XML) #readHTMLTable
 
+#Will create folder where the script was run
+mainDir <- getwd() 
+subDir <- "output_ml"
+dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+#############
 
 months_names <- format(ISOdatetime(2000,1:12,1,0,0,0),"%b")
 startYear <- function(){
@@ -69,7 +75,16 @@ for (i in years){
          
          text_body <- gsub('[\n|+]',' ', text_body) 
          
-         write(text_body[1], file = paste0(i, "_", months_names[j],"_", k, ".txt"))
+         ########## Output 1 - E-mail Reply BODY in .txt ##########
+         
+         #An individual file will be created for every e-mail reply BODY (e.g. 2016_May_74.txt), title, author and timestamp are not stored here.
+         #This format was necessary originally to avoid inconsistent commas, double quotes or tabs in the e-mail body to break a tabular format such as CSV. 
+         
+        
+         
+         write(text_body[1], file = paste0("output_ml/",i, "_", months_names[j],"_", k, ".txt"))
+         
+         #########################################################
          
          
          #Email title
@@ -103,11 +118,21 @@ for (i in years){
             mail_table <- rbind(mail_table,entry) 
          }
          
+         print(paste0("Downloaded E-mail Thread ",k,"/",iterations-1," ",j,"/",i))
          #Introduced to produce a delay - so that our IP isn't blocked
          Sys.sleep(0.5)
          Sys.sleep(2*runif(1))
-         }
-      write.csv(mail_table, file = paste0("Full_Disclosure_Mailing_List_", months_names[j],i, ".csv"))
+      }
+      
+      ############################### Output 2 - Reply's Title, Author and Timestamp in CSV ###############################
+      
+      #Remaining metadata of the e-mail is separated as a .csv, as fields format are pre-defined.
+      
+      colnames(mail_table)=c("year","month","reply_id","title","author","timestamp")
+      write.csv(mail_table,file = paste0("output_ml/","Full_Disclosure_Mailing_List_", months_names[j],i, ".csv"),row.names=FALSE)
+      
+      #####################################################################################################################
+      
       Sys.sleep(5)
    }
    
