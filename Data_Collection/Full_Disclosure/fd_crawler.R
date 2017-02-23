@@ -118,7 +118,7 @@ for (i in years){
             mail_table <- rbind(mail_table,entry) 
          }
          
-         print(paste0("Downloaded E-mail Thread ",k,"/",iterations-1," ",j,"/",i))
+         print(paste0("Downloaded E-mail Reply ID ",k,"/",iterations-1," of ",j,"/",i))
          #Introduced to produce a delay - so that our IP isn't blocked
          Sys.sleep(0.5)
          Sys.sleep(2*runif(1))
