@@ -92,7 +92,7 @@ def lda_v1(topc,thrd,vul_type):
   record={}
 
   for fl in os.listdir(thrd):
-    fn = "\\".join((thrd, fl))
+    fn = os.path.join(thrd, fl)
     if fn.lower().endswith('.txt'):
       f = open(fn,'rb')
       doc = f.read()
