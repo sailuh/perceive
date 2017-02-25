@@ -82,7 +82,7 @@ for (i in years){
          
         
          
-         write(text_body[1], file = paste0("output_ml/",i, "_", months_names[j],"_", k, ".txt"))
+         write(text_body[1], file = paste0("output_ml/",i, "_", tolower(months_names[j]),"_", k, ".txt"))
          
          #########################################################
          
@@ -129,7 +129,7 @@ for (i in years){
       #Remaining metadata of the e-mail is separated as a .csv, as fields format are pre-defined.
       
       colnames(mail_table)=c("year","month","reply_id","title","author","timestamp")
-      write.csv(mail_table,file = paste0("output_ml/","Full_Disclosure_Mailing_List_", months_names[j],i, ".csv"),row.names=FALSE)
+      write.csv(mail_table,file = paste0("output_ml/","full_disclosure_", tolower(months_names[j]),"_",i, ".csv"),row.names=FALSE)
       
       #####################################################################################################################
       
