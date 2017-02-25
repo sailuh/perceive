@@ -1,6 +1,6 @@
 # R Full Disclosure Reply to Thread Aggregator 
 
-TO-DO. Currently functional, but code contains multiple responsabilities. Header still needs to updated by head to serve as input to Python Full Disclosure to Thread Aggregator (below). Will be fixed on following commits.
+TO-DO. Currently functional, but code contains multiple responsabilities (some code need to be separated in different files, e.g. social network and seed functions). Header still needs to updated by head to serve as input to Python Full Disclosure to Thread Aggregator (below). Will be fixed on following commits.
 
 # Python Full Disclosure Reply to Thread Aggregator 
 
