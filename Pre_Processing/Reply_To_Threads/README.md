@@ -1,4 +1,8 @@
-# Full Disclosure Reply to Thread Aggregator 
+# R Full Disclosure Reply to Thread Aggregator 
+
+TO-DO. Currently functional, but code contains multiple responsabilities. Header still needs to updated by head to serve as input to Python Full Disclosure to Thread Aggregator (below). Will be fixed on following commits.
+
+# Python Full Disclosure Reply to Thread Aggregator 
 
 The `fd_to_thread.py` script group the the collected e-mail replies by `fd_group_reply_by_thread.R` into thread files. The thread files are then used for similarity analysis, instead of the individual replies. The pre-processing is done to facilitate topic extraction, under the assumption that replies that share the same subject line (i.e. an e-mail thread) share the same discussion. 
 
