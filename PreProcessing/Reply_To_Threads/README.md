@@ -1,16 +1,22 @@
-The fd_to_thread.py script converts the csv format of email threads of Full disclosure mailing list(example-FD_Threads2002.csv) to
-separate text files for each email thread; which are further used as input for similarity calculation script.
+# Full Disclosure Reply to Thread Aggregator 
 
-NOTES:
-1.	If running the script for 2002 FD list, place this script in the folder containing all the individual FD mails for that particular 
-year
-2.	This script will then generate the text files for each email thread mentioned in the FD_Threads2002.csv file. The text body contains
-only the description for each of the participating mails for each mail thread.
+The `fd_to_thread.py` script group the the collected e-mail replies by `fd_group_reply_by_thread.R` into thread files. The thread files are then used for similarity analysis, instead of the individual replies. The pre-processing is done to facilitate topic extraction, under the assumption that replies that share the same subject line (i.e. an e-mail thread) share the same discussion. 
 
-INSTRUCTIONS TO RUN SCRIPT:
-python fd_to_thread.py FD_Threads2002.csv 
-python fd_to_thread.py FD_Threads2007.csv 
+## Other Important Notes
 
-.....and so on for all years
+ 
+ - The header of the .csv file or order of columns is not important, provided a `threadID` and `reply_IDs` column exists. 
+ 
+ - The script will assume the replies listed per thread on the .csv to be ordered by their ID (which in turn reflects the order of the replies) when grouping the reply body. `fd_group_reply_by_thread.R` already order the replies, so no further pre-processing is needed.
 
-A sample input file (FD_Threads2005.csv) has been uploaded.
+ - Currently, the generated files **do not** include the title of the threads e-mails. 
+
+ - Originally, we grouped in threads replies for one year at a time, but this restriction is not imposed by the code.
+
+## Dependencies
+
+fd_group_reply_by_thread.R
+
+## How to Use 
+
+> <folder with all .txt replies output from fd_group_reply_by_thread.R> <.csv file output from fd_group_reply_by_thread.R> <output folder>"
