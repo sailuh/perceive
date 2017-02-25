@@ -2,6 +2,7 @@
 
 import csv
 import sys
+import os
 
 def get_data(f):
 	try:
@@ -15,25 +16,26 @@ def get_data(f):
 
 
 if __name__ == "__main__":
-	if len(sys.argv) != 2: 
-		print "Usage: <Name of the file>"
+	if len(sys.argv) != 3: 
+		print "Usage: <Name of the file> <output folder>"
 		exit(0)
 
 	fname=sys.argv[1]
+	sname=sys.argv[2]
 
 	j=0
 
 	with open(fname) as f:
-		reader = csv.DictReader(f)
+		reader = csv.DictReader (f)
 		for row in reader:
-			ids=row['threadtId'].strip()
+			ids=row['threadID'].strip()
 			reply_id=row['reply_IDs'].strip()
 			reply_ids=reply_id.split(",")
 			i=".".join((ids,"txt"))
 			text=get_data(i)
 			jf="_".join(("thread",str(j)))
 			jfile=".".join((jf,"txt"))
-			fn= open(jfile,'wb')
+			fn= open(os.path.join(sname,jfile),'wb')
 			for r in reply_ids:
 				f1=".".join((r,"txt"))
 				if f1==".txt":
