@@ -19,4 +19,6 @@ fd_group_reply_by_thread.R
 
 ## How to Use 
 
-> <folder with all .txt replies output from fd_group_reply_by_thread.R> <.csv file output from fd_group_reply_by_thread.R> <output folder>"
+```
+<folder with all .txt replies output from fd_group_reply_by_thread.R> <.csv file output from fd_group_reply_by_thread.R> <output folder>`
+```
