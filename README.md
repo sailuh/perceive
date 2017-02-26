@@ -26,9 +26,13 @@ Explore CAPEC from a data lens to gain insight on selecting words for corpus cre
 
 ## Text Mining
 
-Investigate knowledge sources similarity discussed in mailing lists:
+Investigate knowledge sources similarity to ongoing discussion in mailing lists:
 
-![lda_similarity_not_loaded](Websites/Project/lda_similarity.png)
+![lda_similarity_not_loaded](Websites/Project/lda_similarity.png) 
+
+or by using our scripts in combination with other tools:
+
+![concept_map_not_loaded](Websites/Project/concept_map.png) 
 
 Feel free to contact us if you are interested in colaborating! 
 
