@@ -30,12 +30,12 @@ if __name__ == "__main__":
 		reader = csv.DictReader (f)
 		for row in reader:
             #extract the reply file name that is the root and add .txt suffix
-			ids=row['threadID'].strip()
+			ids=row['thread_id'].strip()
 			i=".".join((ids,"txt"))
             #extract root reply content.
 			text=get_data(os.path.join(folderpath,i))            
             #extract to a python list reply file names of the given row 
-			reply_id=row['reply_IDs'].strip()
+			reply_id=row['thread_reply_ids'].strip()
 			reply_ids=reply_id.split(",")                                    
             #create thread file name and add .txt suffix
 			jf="_".join(("thread",str(j)))

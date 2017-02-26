@@ -16,33 +16,24 @@ months_names <- format(ISOdatetime(2000,1:12,1,0,0,0),"%b")
 # print(paste0("The year to be analyzed is ", year))
 # 
 
-merge_data <- function(year){
-   
-  csv_file_list1 <- list.files(path =file.path(paste0("./body_corpus"), paste0(year)), pattern = "*.csv", full.names = T)
+group_replies_by_thread <- function(year){
 
-  datalist = lapply(csv_file_list1, FUN = "read.csv", header = T, stringsAsFactors = F)
+  #Load the list of replies header (.csv of every month) and merge in a single file. 
+  replies.header.filepaths <- list.files(path =file.path(paste0("./body_corpus"), paste0(year)), pattern = "*.csv", full.names = T)
+  replies.header.list <- lapply(replies.header.filepaths, FUN = "read.csv", header = T, stringsAsFactors = F)
+  replies.header <- Reduce(function(...) rbind(...), replies.header.list)
 
-  merged.data = Reduce(function(...) rbind(...), datalist) #Map-Reduce function to merge all the rows.. wouldn't this change the order of the months..?
-  merged.data<- merged.data[,-1] #Removes the row.names from the old script that becomes a column. This lines can be removed on the new version.
-
-  merged.data$document_ID <- paste(merged.data$i, merged.data$months_names.j., merged.data$k, sep = "_") 
-  merged.data$document_url <- paste("http://seclists.org/fulldisclosure", merged.data$i, merged.data$months_names.j., merged.data$k, sep = "/")
-
-  #as factor the months column
-  merged.data[,2] <- factor(merged.data[,2], ordered = 1)
+  replies.header$reply_id <- paste(replies.header$year, replies.header$month, replies.header$reply_month_id, sep = "_") 
+  replies.header$reply_url <- paste("http://seclists.org/fulldisclosure", replies.header$year, replies.header$month, replies.header$reply_month_id, sep = "/")
 
   #order by month, and reply id 
-  merged.data <- merged.data[order(merged.data$months_names.j.,merged.data$k),]
-
-  #merged.data$email <- unlist(strapplyc(merged.data$author, "<(.*)>")
-
-  #merged.data$author <- gsubfn("<.*>", "", merged.data$author)
+  replies.header <- replies.header[order(replies.header$month,replies.header$reply_month_id),]
   
-  #Remove double quotes from the author string. Not sure why. 
-  merged.data$author<- gsubfn("\"","", merged.data$author)
+  #Extract author and remove double quotes from the author string
+  replies.header$author<- gsubfn("\"","", replies.header$author)
   
-  #shuffle columns.
-  merged.data<- merged.data[,c("document_ID", "title", "author", "dateStamp","document_url" ,"months_names.j." ,"k")]
+  #shuffle columns for readability purposes.
+  replies.header<- replies.header[,c("reply_id", "title", "author", "timestamp","reply_url" ,"month" ,"reply_month_id")]
 
   #Output of the For Loop: The number of replies of the given e-mail thread. If lone thread, it will be 0. 
   #
@@ -51,34 +42,33 @@ merge_data <- function(year){
   #This loop is extremely inneficient, it cleans the vector nrow times instead of being reused after applied once!
   #The end result of this loop is a new column that indicates the number of times the same e-mail title was repeated, or 
   #the number of replies of that e-mail thread. 
-  for(i in 1:nrow(merged.data)){
-    merged.data$documentWeight[i] <- sum( gsub(".*Re: ","",merged.data$title) == paste0(merged.data$title[i]) )
+  for(i in 1:nrow(replies.header)){
+    replies.header$thread_n_replies[i] <- sum( gsub(".*Re: ","",replies.header$title) == paste0(replies.header$title[i]) )
   }
-
   
-  for(i in 1:nrow(merged.data)){
+  for(i in 1:nrow(replies.header)){
     
     #another expensive vector operation for every row. for every row this results in a vector of TRUE/FALSE of the row positions with same e-mail thread.
-    #the rows are then retrieved on the repeated_emails variable..
-    repeated_emails <- subset(merged.data, gsub(".*Re: ","",merged.data$title) == paste0(gsub(".*Re: ","",merged.data$title[i])))
-    merged.data$parentDocument_ID[i] <- repeated_emails$document_ID[repeated_emails$k == min(repeated_emails$k)]
+    #the rows are then retrieved on the repeated_replies variable..
+    repeated_replies <- subset(replies.header, gsub(".*Re: ","",replies.header$title) == paste0(gsub(".*Re: ","",replies.header$title[i])))
+    replies.header$thread_id[i] <- repeated_replies$reply_id[repeated_replies$reply_month_id == min(repeated_replies$reply_month_id)]
     
     #the minimum reply id of the set of e-mail replies in that position is stored.. so basically in a subset of 5 e-mail replies, it will overwrite with the minimum on all the rows rather than remove them already from the vector.... Could have reused the index from above as well at least when getting the min()..
-    merged.data$threadAuthor[i]<- repeated_emails$author[repeated_emails$k == min(repeated_emails$k)]
+    replies.header$thread_author[i]<- repeated_replies$author[repeated_replies$reply_month_id == min(repeated_replies$reply_month_id)]
     
     #same logic as above to extract the title.. could have at least reused the index from above instead of recalculating it here..
-    merged.data$parentTitle[i]<- repeated_emails$title[repeated_emails$k == min(repeated_emails$k)]
+    replies.header$thread_title[i]<- repeated_replies$title[repeated_replies$reply_month_id == min(repeated_replies$reply_month_id)]
     
     #here the vector is flattened out as a string, which will contain the list of all the e-mail ids that were repeated (e.g. 2016_May_36,2016_May_37,2016_May_48,2016_May_54" )
-    merged.data$listOfReplys[i]<- paste(repeated_emails$document_ID[repeated_emails$documentWeight == 0], collapse = ",")
+    replies.header$thread_reply_ids[i]<- paste(repeated_replies$reply_id[repeated_replies$thread_n_replies == 0], collapse = ",")
     
     #This is a flattened out as a string, which will contain the list of all authors. Not sure how yet.
-    merged.data$contributingAuthors[i]<- paste(merged.data$threadAuthor[i], unique(repeated_emails$author[repeated_emails$documentWeight == 0 & repeated_emails$author != repeated_emails$threadAuthor]), collapse = ",", sep = ",")
+    replies.header$thread_reply_authors[i]<- paste(replies.header$thread_author[i], unique(repeated_replies$author[repeated_replies$thread_n_replies == 0 & repeated_replies$author != repeated_replies$thread_author]), collapse = ",", sep = ",")
     
     #Supposedly this line tells you the number of authors for the e-mail thread. Not sure how yet. 
-    merged.data$authorCount[i]<- length(unique(repeated_emails$author[repeated_emails$documentWeight == 0 & repeated_emails$author != repeated_emails$threadAuthor])) + 1
+    replies.header$thread_n_authors[i]<- length(unique(repeated_replies$author[repeated_replies$thread_n_replies == 0 & repeated_replies$author != repeated_replies$thread_author])) + 1
   }
-  return(merged.data)
+  return(replies.header)
 }
 
 
@@ -86,15 +76,15 @@ seeded_data <- function(data){
    csv_file_list2 <- list.files(path = file.path(paste0("./edited_edgelists")), pattern = paste0(year,"_edgelist.csv"), full.names = T)
    
    seed_file<-read.csv(csv_file_list2, stringsAsFactors = F)
-   names(seed_file)<-c("noun", "document_ID")
+   names(seed_file)<-c("noun", "reply_id")
    
    return(seed_file)
 }
 
 
 edge_data <- function(gephi_data){
-   edgelist <- data.frame(count(gephi_data, vars = c("parentDocument_ID","noun", "parentTitle")))
-   names(edgelist)<-c("Source","Target", "parentTitle","Weight")
+   edgelist <- data.frame(count(gephi_data, vars = c("thread_id","noun", "thread_title")))
+   names(edgelist)<-c("Source","Target", "thread_title","Weight")
    edgelist$color <- "yellow"
    edgelist<- edgelist[edgelist$Target != " ",]
    return(edgelist)
@@ -102,32 +92,32 @@ edge_data <- function(gephi_data){
 
 
 node_data<- function(gephi_data){
-   nodelist <- data.frame(count(gephi_data, vars = c("parentDocument_ID", "parentTitle","threadAuthor","listOfReplys","contributingAuthors","authorCount","documentWeight")))
-   nodelist<- nodelist[nodelist$documentWeight!= 0,-ncol(nodelist)]
-   seedNodes <- data.frame(count(gephi_data, vars = c("noun","parentDocument_ID", "parentTitle")))
+   nodelist <- data.frame(count(gephi_data, vars = c("thread_id", "thread_title","thread_author","thread_reply_ids","thread_reply_authors","thread_n_authors","thread_n_replies")))
+   nodelist<- nodelist[nodelist$thread_n_replies!= 0,-ncol(nodelist)]
+   seedNodes <- data.frame(count(gephi_data, vars = c("noun","thread_id", "thread_title")))
    #nodelist <- rbind.data.frame(count(gephi_data, vars = c("noun", "seedOccurance")))
-   names(nodelist)<- c("Id","Label","threadAuthor","List_of_Reply_Ids","contributingAuthors","authorCount","Weight")
+   names(nodelist)<- c("Id","Label","thread_author","List_of_Reply_Ids","thread_reply_authors","thread_n_authors","Weight")
    nodelist$Weight<- nodelist$Weight - 1
    
-   nodelist<- nodelist[order(nodelist$Weight,nodelist$authorCount, decreasing = T),]
+   nodelist<- nodelist[order(nodelist$Weight,nodelist$thread_n_authors, decreasing = T),]
    
    for (l in 1:nrow(nodelist)) {
-      nodelist$documentURL[l] <- gephi_data$document_url[nodelist$Id[l] == gephi_data$document_ID][1]  
+      nodelist$documentURL[l] <- gephi_data$document_url[nodelist$Id[l] == gephi_data$reply_id][1]  
    }
    return(nodelist)
 }
 
 
 for(year in 2002:2016){
-  data <- merge_data(year)
+  data <- group_replies_by_thread(year)
   write.csv(data, file = paste0("author_document_data_",year,".csv"), row.names = F)
 
   seed_file<- seeded_data(data)
   write.csv(seed_file, file = paste0("document_seed_data_",year,".csv"), row.names = F)
 
 
-  gephi_data <- merge(x= data, y = seed_file, by="document_ID", all.y = TRUE, sort = TRUE)
-  gephi_data<- gephi_data[order(-gephi_data$documentWeight,gephi_data$months_names.j.,gephi_data$k),]
+  gephi_data <- merge(x= data, y = seed_file, by="reply_id", all.y = TRUE, sort = TRUE)
+  gephi_data<- gephi_data[order(-gephi_data$thread_n_replies,gephi_data$months_names.j.,gephi_data$reply_month_id),]
   gephi_data$color <- "blue"
   write.csv(gephi_data, file = paste0("gephi_data_",year,".csv"), row.names = FALSE)
 
@@ -139,6 +129,6 @@ for(year in 2002:2016){
   write.csv(edgelist, file = paste0("edgelist", year,".csv"), row.names = FALSE)
 
   Author_Document_data <- nodelist
-  names(Author_Document_data)<- c("threadtId", "threadTitle", "threadAuthor", "reply_IDs","contributingAuthors","nAuthors","nReplys", "threadURL")
+  names(Author_Document_data)<- c("threadtId", "threadTitle", "thread_author", "reply_IDs","thread_reply_authors","nAuthors","nReplys", "threadURL")
   write.csv(Author_Document_data, file = paste0("FD_Threads",year,".csv"), row.names = F)
 }
