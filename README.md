@@ -34,6 +34,6 @@ or by using our scripts in combination with other tools:
 
 ![concept_map_not_loaded](Websites/Project/concept_map.png) 
 
+# Contact Us
+
 Feel free to contact us if you are interested in colaborating! 
-
-
