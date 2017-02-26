@@ -4,7 +4,7 @@ The cybersecurity community typically reacts to attacks after they occur. Being 
 
 # Our Group 
 
-We are currently prototyping some tools to investigate how far ahead we can investigate upcoming threats, using social network analysis and text mining. 
+We are currently prototyping some tools to investigate how far ahead we can identify upcoming threats, using social network analysis and text mining. 
 
 ![may_2016_image_not_loaded](perceive_roadmap.png)
 
