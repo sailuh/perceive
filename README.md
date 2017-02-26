@@ -6,7 +6,7 @@ The cybersecurity community typically reacts to attacks after they occur. Being 
 
 We are currently prototyping some tools to investigate how far ahead we can identify upcoming threats, using social network analysis and text mining. 
 
-![may_2016_image_not_loaded](Websites/Project/perceive_roadmap.png)
+![perceive_roadmap_not_loaded](Websites/Project/perceive_roadmap.png)
 
 # Getting Started
 
@@ -16,19 +16,19 @@ Here are some of the things you can do with what is available in our github:
 
 Explore social network patterns in seclists.org:
 
-![may_2016_image_not_loaded](Websites/Project/perceive_roadmap.png)
+![social_network_not_loaded](Websites/Project/fulldisclosure_nooverlap_curved.gif)
 
 ## Knowledge Source
 
 Explore CAPEC from a data lens to gain insight on selecting words for corpus creation: 
 
-![may_2016_image_not_loaded](attack_pattern_fields.png)
+![attack_pattern_not_loaded](Websites/Project/attack_pattern_fields.png)
 
 ## Text Mining
 
 Investigate knowledge sources similarity discussed in mailing lists:
 
-![may_2016_image_not_loaded](lda_similarity.png)
+![lda_similarity_not_loaded](Websites/Project/lda_similarity.png)
 
 Feel free to contact us if you are interested in colaborating! 
 
