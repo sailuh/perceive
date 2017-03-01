@@ -15,7 +15,7 @@ def crawl(inpath, filename):
 	f= open(filename, 'wb')
 	urls= []
 	writer = csv.writer(f)
-	writer.writerow(('CVE-ID', 'Vulnerability Type','Description','CWE-ID'))
+	writer.writerow(('cve_id','cwe_id','n_exploits','vulnerability_type','published_date','updated_date','description','score','gained_access_level','access','complexity','authentication','conf','integ','avail'))
 
 	f12=open(inpath)
 	reader=csv.DictReader(f12)
@@ -45,12 +45,24 @@ def crawl(inpath, filename):
 
 				else:		# id and vulnerability type and weakness id
 					cid= r[1].text.strip()
+					cweid= r[2].text.strip()                    
+					n_exploit= r[3].text.strip()
 					vtype= r[4].text.strip()
-					cweid= r[2].text.strip()
+					published_date= r[5].text.strip()
+					update_date= r[6].text.strip()
+					nvd_score= r[7].text.strip()
+					nvd_gain_access_level= r[8].text.strip()
+					nvd_access= r[9].text.strip()
+					nvd_complexity= r[10].text.strip()
+					nvd_authentication= r[11].text.strip()
+					nvd_conf= r[12].text.strip()
+					nvd_integ= r[13].text.strip()
+					nvd_avail= r[14].text.strip()
+
 
 				if j%2==0:
 					try:
-						writer.writerow([cid, vtype, desc,cweid])
+						writer.writerow([cid,cweid,n_exploit,vtype,published_date,update_date,desc,nvd_score,nvd_gain_access_level,nvd_access,nvd_complexity,nvd_authentication,nvd_conf,nvd_integ,nvd_avail])
 					except UnicodeEncodeError:
 						print "Ignoring"
 
