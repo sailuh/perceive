@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Welcome to Perceive{% endblock %}
+{% block head %}Welcome to Perceive{% endblock %}
+{% block content %}
+    
+<div class="container">
+  <div class="toppane">
+
+<p>Welcome {{ user.username }} !!!</p></div>
+  <div class="leftpane">
+    <h1>Email</h1>
+       <form id = "email_form" method="post" action = "{% url 'home' %}">
+	{% csrf_token %}
+	{%if click_count|divisibleby:2 %}
+		<p id="display" style="visibility:visible;">{{ user_content.email_thread.text_doc }} </p>
+	{% else %}
+		<p id="display" style="display:none;">{{ user_content.email_thread.text_doc }} </p>
+	{% endif %}
+	
+	<button name="hide-show" type="submit" value="hide-show" id="hide-show">Hide/show</button>
+	
+	<input type="hidden" id="disp_email" name="disp_email" value="{{click_count}}">
+           {{click_count}}
+	
+	</form>
+	
+       <form id = "session_form" method="post" action = "{% url 'home' %}">
+	{% csrf_token %}
+
+	<input type="hidden" id="disp_session" name="disp_session" value="{{session.id}}">
+         <p style='color:red;'> {{error_msg}}</p>
+	<button type="submit" name="end-session" value="end-session" id="end-session">End session</button>
+	</form>
+
+  
+	</div>
+  <div class="middlepane"><h1>Question</h1></div>
+  <div class="rightpane">
+    <h1>Knowledge Source</h1></div>
+</div>
+
+    <a href="/logout/">Logout</a>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+//var count = 0;
+//var operation = 
+
+function getTimeStamp() {
+       var now = new Date();
+       return ((now.getMonth() + 1) + '/' + (now.getDate()) + '/' + now.getFullYear() + " " + now.getHours() + ':'
+ + ((now.getMinutes() < 10) ? ("0" + now.getMinutes()) : (now.getMinutes())) + ':' + ((now.getSeconds() < 10) ? ("0" + now.getSeconds()) : (now.getSeconds())));
+}
+
+
+
+/*$(document).ready(function(){
+
+    $("#hide-show").click(function(){
+        
+        //count++;
+	
+		$("#display").toggle(function(){
+		$(document).getElementById('disp_email').value += 2;
+
+});
+	
+	
+	//return 1-hide 0-show
+    });
+});*/
+
+//var flip = ($(document).getElementById('disp_email').value+1);
+$(document).ready(function(){
+ $("#hide-show").click(function(){
+        
+        //count++;
+	
+		$("#display").toggle();
+	$.ajax({
+  	type: "POST",
+  	url: {% url 'home' %},
+  	
+  	disp_email: ($(document).getElementById('disp_email').value+1)
+});
+	
+	//return 1-hide 0-show
+    });
+});
+
+/*$("#hide-show").click(function(){
+        
+        //count++;
+	$(document).getElementById('disp_email').value += 1
+
+	var tcount = $(document).getElementById('disp_email').value;
+	alert(tcount);
+	if(tcount%2 == 0)
+		$("#display").show();//$(document).getElementById('disp_email').value = "_show";
+		
+	else
+		$("#display").hide();//$(document).getElementById('disp_email').value = "_hide";
+	
+
+	$("#email-form").submit();
+	//return 1-hide 0-show
+    });*/
+</script>
+{% endblock %}
