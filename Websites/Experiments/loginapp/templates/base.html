@@ -3,6 +3,8 @@
     <head>
         <title>Django Login Application |
         {% block title %}{% endblock %}</title>
+	{% load staticfiles %}
+ 	 <link rel="stylesheet" href="{% static 'view_login.css' %}">
     </head>
     <body>
         <h1>{% block head %}{% endblock %}</h1>
@@ -10,3 +12,4 @@
  
     </body>
 </html>
+
