@@ -37,6 +37,7 @@ def logout_page(request):
     return HttpResponseRedirect('/')
  
 @login_required
+@csrf_protect
 def home(request):
 	if request.user.is_authenticated():
 		#retrieve a start session or create new
@@ -110,12 +111,38 @@ def home(request):
 				show_action = "_hide";
 			cl = Click_log.objects.create(user = request.user,session = session, click_action = show_action)
 
-		if request.method == 'POST' and 'end-session' in request.POST:
+		elif request.method == 'POST' and 'end-session' in request.POST:
 			check_session = Session_log.objects.filter(user=request.user).latest('time_action')
 			if check_session.session_action == '_start':
 				Session_log.objects.create(user = request.user, session_action = '_end') 
 			else:
 				error_msg = 'This session has already ended. LOgout and login to start a new session'
+
+		elif request.method == "POST" and 'bheight' in request.POST:
+        		#form = AdvertForm(request.POST)
+
+		        #message = 'something wrong!'
+		        #if(form.is_valid()):
+			#print(request.POST['title'])
+			log.debug(request.POST['bheight'])
+            		bheight = request.POST['bheight']
+			bwidth = request.POST['bwidth']
+			bl = Box_log.objects.create(user = request.user,session = session, width = bwidth,height = bheight)
+			log.debug(bheight)
+        		#return HttpResponse(json.dumps({'bheight': bheight,'bwidth':bwidth}))
+			return render(request,'home.html',{'user': request.user, 'session':session, 'user_content': user_content,'click_count':click_count, 'error_msg':error_msg,'bheight': bheight,'bwidth':bwidth})
+		
+
+		elif request.method == "POST" and 'scroll_pos' in request.POST:
+        		
+			log.debug(request.POST['scroll_pos'])
+            		scroll_pos = request.POST['scroll_pos']
+			
+			sl = Box_scroll_log.objects.create(user = request.user,session = session, scrollbar_pos = scroll_pos)
+			
+        		#return HttpResponse(json.dumps({'bheight': bheight,'bwidth':bwidth}))
+			return render(request,'home.html',{'user': request.user, 'session':session, 'user_content': user_content,'click_count':click_count, 'error_msg':error_msg,'scroll_pos': scroll_pos})
+
 		#user_content.EmailThread.id = "does it exists?"
     	return render(request,'home.html',{'user': request.user, 'session':session, 'user_content': user_content,'click_count':click_count, 'error_msg':error_msg})
 
