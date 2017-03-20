@@ -63,7 +63,18 @@ class Click_log(models.Model):
 	click_action = models.CharField(choices = ACTION_CHOICES, default = SHOW_ACTION ,max_length=255)
 
 
+class Box_log(models.Model):
+	user = models.ForeignKey(User)
+	session = models.ForeignKey(Session_log)
+	timestamp_resize = models.DateTimeField(default=timezone.now)
+	width = models.CharField(max_length=35, null=True, default=None,blank=True)
+	height = models.CharField(max_length=35, null=True, default=None,blank=True)
 
+class Box_scroll_log(models.Model):
+	user = models.ForeignKey(User)
+	session = models.ForeignKey(Session_log)
+	timestamp_resize = models.DateTimeField(default=timezone.now)
+	scrollbar_pos = models.CharField(max_length=35, null=False, default=None,blank=True)
 
 
         
