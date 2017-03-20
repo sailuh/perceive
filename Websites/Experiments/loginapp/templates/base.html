@@ -3,10 +3,11 @@
     <head>
         <title>Django Login Application |
         {% block title %}{% endblock %}</title>
-	{% load staticfiles %}
- 	 <link rel="stylesheet" href="{% static 'view_login.css' %}">
+	{% load static %}
+ 	 <link rel="stylesheet" href="{% static 'css/loginapp/view_login.css' %}">
 	<style>
-		#box{
+
+#box{
     position: relative;
     width: 130px;
     height: 130px;
