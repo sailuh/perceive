@@ -6,7 +6,8 @@
 <div class="container">
   <div class="toppane">
 
-<p>Welcome {{ user.username }} !!!</p></div>
+<p>Welcome {{ user.username }} !!! <a href="/logout/" style="float:right;">Logout</a></p>
+ </div>
   <div class="leftpane">
     <h1>Email</h1>
        <form id = "email_form" method="post" action = "{% url 'home' %}">
@@ -24,50 +25,119 @@
 	
 	</form>
 	
-       <form id = "session_form" method="post" action = "{% url 'home' %}">
+      
+
+
+	<form id="box-form" method="post" action="{% url 'home' %}">
+	{% csrf_token %}
+	<div id="box" style="overflow-y:scroll; ">
+    		<div>Resize me ! <br>THis box is for demo only<br>{{ user_content.email_thread.text_doc }}</div>
+		    <div id="handle">
+			   
+			    
+		    </div>
+	</div>
+		 <input type="hidden" id= "ht" type="text" name="bheight">{{bheight}}<br><br>
+		<input type="hidden" id= "wt" type="text" name="bwidth">{{bwidth}}
+	</form> <br><br>
+	<div id="output"></div>
+	<form id="box1-form" method="post"  action="{% url 'home' %}">
+	{% csrf_token %}
+  	
+		 <input type="hidden" id= "scroll_pos" type="text" name="scroll_pos">{{scroll_pos}}
+	
+	</form>
+
+	 <form id = "session_form" method="post" action = "{% url 'home' %}">
 	{% csrf_token %}
 
 	<input type="hidden" id="disp_session" name="disp_session" value="{{session.id}}">
          <p style='color:red;'> {{error_msg}}</p>
 	<button type="submit" name="end-session" value="end-session" id="end-session">End session</button>
 	</form>
-<input  id="hid-ht" value="{{bheight}}">{{bheight}}
-<input  id="hid-wt" value="{{bwidth}}">{{bwidth}}
 
+	</div>
+  <div class="middlepane"><h1>Question</h1>
 
-	<form id="box-form" method="post" action="{% url 'home' %}">
-	{% csrf_token %}
-	<div id="box" >
-    		<div>Resize me ! <br>THis box is for demo only<br>To show how the contents of email would look inside a box</div>
-		    <div id="handle">
-			    <input id= "ht" type="text" name="bheight">{{bheight}}
-			     <input id= "wt" type="text" name="bwidth">{{bwidth}}
-		    </div>
+	 <h3> Please answer the following questions: </h3>
+
+		<form id="form-survey" style="width=100%;" method="post" action="{% url 'home' %}">
+        {% csrf_token %}
+
+	<fieldset >
+		<legend></legend>
+		<label>Is this e-mail thread related to this knowledge source <b>subject?</b> </label><br>
+		<input type="radio" id="knowledge_source_relation" name="knowledge_source_relation" value="yes" >Yes <br>
+		<input type="radio" id="knowledge_source_relation" name="knowledge_source_relation" value="no">No <br>
+		<input type="radio" id="knowledge_source_relation" name="knowledge_source_relation"  value="dont_know">I don't know <br>
+				
+	</fieldset>
+	<fieldset>
+		<legend></legend>
+		<label>Is this e-mail thread related to any other <b>subject(s)?</b> </label><br>
+		<input type="radio" id="subject_relation" name="subject_relation" value="yes" >Yes <br>
+		If yes, Please mention the subjects and separate each of them by a comma(,) <input type="text" style="max-width:500px;" name="subject_list" id="subject_list"><br>
+		<input type="radio" id="subject_relation" name="subject_relation" value="no">No <br>
+		<input type="radio" id="subject_relation" name="subject_relation"  value="dont_know">I don't know <br>
+	</fieldset>
+	 <div id="q3">
+	<fieldset>
+		<legend></legend>
+		Why did you associate the provided e-mail thread to the above subjects? (e.g. Reply ID 1 use-after-free)<p>
+		
+<textarea style="max-width:800px; min-width:300px;height:70px;" id="association_reason" name= "association_reason" required autofocus></textarea>
+	</fieldset>
 	</div>
-	</form> <br><br><br><br>
-	<div id="output"></div>
-	<form id="box1-form" method="post" action="{% url 'home' %}">
-	{% csrf_token %}
-  	<div id="box1" style="overflow-y:scroll;">
-    		<div><br>THis box is for demo only<br>To show how the contents of email would look inside a box</div>
-		  <input id= "scroll_pos" type="text" name="scroll_pos">{{scroll_pos}}  
-	</div>
+	<fieldset>
+	<legend></legend>
+		<label> Were you uncertain about this e-mail thread being associated with any subject? <br>If yes, please list them here, one per line having subject and reason separated by comma (e.g.
+<ul><li>Fingerprinting, Because Reply 2 mentioned about OS Fingerprinting</li>
+<li>DLL Hijacking, The term was used in the e-mail title.</li>
+<li>[Subject 3], [Reason 3]</li></ul></label>
+
+<textarea style="max-width:800px;min-width:300px; height:70px;" id="uncertain" name= "uncertain" required autofocus></textarea>	
+	</fieldset>
+ 	<button type="submit" name="end-survey" value="end-survey" id="end-survey">Submit Responses</button>
+
 	</form>
-	</div>
-  <div class="middlepane"><h1>Question</h1></div>
+
+
+
+
+
+
+  </div>
   <div class="rightpane">
     <h1>Knowledge Source</h1></div>
 </div>
 
-    <a href="/logout/">Logout</a>
+   
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <script>
-//var count = 0;
-//var operation = 
 
+
+var input1 = document.getElementById('subject_relation'); 
+var input2 = document.getElementById('knowledge_source_relation'); 
+input1.onchange = function() {
+	alert(input1.value);
+	alert(input2.value);
+	/*if($(this).val() == 'dont_know' && $("#knowledge_source_relation").val() == 'dont_know')
+    		$('#q3').hide();    
+	else
+		$('#q3').show();*/
+};
+
+$("#knowledge_source_relation").change(function() {
+	alert($(this).val());
+	alert($("#subject_relation").val());
+	/*if($("#subject_relation").val() == 'dont_know' && $(this).val() == 'dont_know')
+    		$('#q3').hide();   
+	else
+		$('#q3').show(); */
+});
 function getTimeStamp() {
        var now = new Date();
        return ((now.getMonth() + 1) + '/' + (now.getDate()) + '/' + now.getFullYear() + " " + now.getHours() + ':'
@@ -75,24 +145,6 @@ function getTimeStamp() {
 }
 
 
-
-/*$(document).ready(function(){
-
-    $("#hide-show").click(function(){
-        
-        //count++;
-	
-		$("#display").toggle(function(){
-		$(document).getElementById('disp_email').value += 2;
-
-});
-	
-	
-	//return 1-hide 0-show
-    });
-});*/
-
-//var flip = ($(document).getElementById('disp_email').value+1);
 $(document).ready(function(){
  $("#hide-show").click(function(){
         
@@ -109,25 +161,6 @@ $(document).ready(function(){
 	//return 1-hide 0-show
     });
 });
-
-/*$("#hide-show").click(function(){
-        
-        //count++;
-	$(document).getElementById('disp_email').value += 1
-
-	var tcount = $(document).getElementById('disp_email').value;
-	alert(tcount);
-	if(tcount%2 == 0)
-		$("#display").show();//$(document).getElementById('disp_email').value = "_show";
-		
-	else
-		$("#display").hide();//$(document).getElementById('disp_email').value = "_hide";
-	
-
-	$("#email-form").submit();
-	//return 1-hide 0-show
-    });*/
-
 
 
 
@@ -146,24 +179,25 @@ function startResizing(e) {
    box.style.height = (e.clientY - box.offsetTop) + 'px';
    document.getElementById('ht').value = box.style.height;
    document.getElementById('wt').value = box.style.width;
-   document.getElementById('hid-ht').value = box.style.height;
-   document.getElementById('hid-wt').value = box.style.width;
+   
    //alert(document.getElementById('ht').value , document.getElementById('wt').value );
 }
 function stopResizing(e) {
     window.removeEventListener('mousemove', startResizing, false);
     window.removeEventListener('mouseup', stopResizing, false);
-	alert(document.getElementById('wt').value);
+	//alert(document.getElementById('wt').value);
     //var ht = box.style.height;
     //var wt = box.style.width;
-alert($("#hid-ht").val());
+//alert($("#ht").val());
+//alert($("#box").clientY);
+//alert($("#box").clientX);
 $("#box-form").submit(function(e) {
 	 $.ajax({ 
         url: $("#box-form").attr('action'),
         data: {bheight: $('#ht').val(),bwidth:$('#wt').val()},
         type: 'POST',
         success: function(data) {
-            alert(data);
+            //alert(data);
 
             }
     });
@@ -179,11 +213,11 @@ $("#box-form").submit(function(e) {
 //$("#box-form").submit()
 
  $.ajax({
-	type: "POST",
-        url: $("#box-form").attr('action'),
-	data: $("#box-form").serialize(), // serializes the form's elements.
+	type: 'POST',
+        url: $('#box-form').attr('action'),
+	data: $('#box-form').serialize(), // serializes the form's elements.
 	success: function(data){         
-		alert(data); // show response from the php script.
+		//alert(data); // show response from the php script.
            		}
          				
 		});
@@ -198,22 +232,23 @@ $("#box-form").submit(function(e) {
 			stopped = "<span id='stopped'>Stopped</span>";
 			
 
-		    $( "#box1" ).scroll(function() {
+		    $( "#box" ).scroll(function() {
 		    	$output.html( scrolling );
     			clearTimeout( $.data( this, "scrollCheck" ) );
     			$.data( this, "scrollCheck", setTimeout(function() {
     				$output.html( stopped );
-				alert($("#box1").scrollTop());
-				document.getElementById('scroll_pos').value  = $("#box1").scrollTop();
-				alert(document.getElementById('scroll_pos').value);
-				alert($("#scroll_pos").val());
+				//alert($("#box").scrollTop());
+				document.getElementById('scroll_pos').value  = $("#box").scrollTop();
+				//alert(Math.max( $("#box").clientHeight, $("#box").scrollHeight, $("#box").offsetHeight );
+				//alert(document.getElementById('scroll_pos').value);
+				//alert($("#scroll_pos").val());
 				 $.ajax({
            				type: "POST",
 				        url: $("#box-form").attr('action'),
 					data: $("#box1-form").serialize(), // serializes the form's elements.
 				        success: function(data)
            				{
-				               alert(data); // show response from the php script.
+				               //alert(data); // show response from the php script.
            				}
          				});
 
@@ -230,5 +265,7 @@ $("#box-form").submit(function(e) {
 })( jQuery );
 
  
+
+
 </script>
 {% endblock %}
