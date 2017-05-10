@@ -4,6 +4,8 @@
 
 This notebook includes a _data_ folder for sample files. In the [data/input](data/input) folder, the 2008 author and node lists are included. These lists are used in notebook section **2.4** to generate the 2008 network graph. The [data/output](data/output) folder contains the graph exported in section **5.2.2** of the notebook.
 
+The _img_ folder includes graphics used in the notebook. These include the organized [Full Disclosure over time](img/network_over_time) images used in section **3.1** and the [blob subgraphs](img/blob_subgraphs) from section **5.4.1**.
+
 ## 2. Supplementary materials
 
 ### 2.1 Edge and node lists
