@@ -1,0 +1,175 @@
+[
+ {
+    "fields": {
+      "body_text": ""      
+    },
+    "pk": 0,
+    "model": "loginapp.EmailBody"
+  },  
+{
+    "fields": {
+      "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"      
+    },
+    "pk": 1,
+    "model": "loginapp.EmailBody"
+  },
+  {
+    "fields": {
+      "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"    
+    },
+    "pk": 2,
+    "model": "loginapp.EmailBody"
+  },
+  
+  {
+    "fields": {
+       "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"  
+    },
+    "pk": 3,
+    "model": "loginapp.EmailBody"
+  },
+  {
+    "fields": {
+       "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"  
+    },
+    "pk": 4,
+    "model": "loginapp.EmailBody"
+  },
+  {
+    "fields": {
+       "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"  
+    },
+    "pk": 5,
+    "model": "loginapp.EmailBody"
+  },
+  {
+    "fields": {
+      "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"  
+    },
+    "pk": 6,
+    "model": "loginapp.EmailBody"
+  },
+  {
+    "fields": {
+     "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"  
+    },
+    "pk": 7,
+    "model": "loginapp.EmailBody"
+  },
+  {
+    "fields": {
+      "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"  
+    },
+    "pk": 8,
+    "model": "loginapp.EmailBody"
+  },
+  {
+    "fields": {
+      "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"  
+    },
+    "pk": 9,
+    "model": "loginapp.EmailBody"
+  },
+  {
+    "fields": {
+      "body_text": "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created"  
+    },
+    "pk": 10,
+    "model": "loginapp.EmailBody"
+  },
+  
+  
+  
+  {
+    "fields": {
+      "title": "First Email Thread",
+      "parent_email_id": 1,
+      "child_email_id": 0
+      
+    },
+    "pk": 1,
+    "model": "loginapp.EmailThread"
+  },
+  {
+    "fields": {
+      "title": "First Email Thread",
+      "parent_email_id": 2,
+      "child_email_id": 3
+    },
+    "pk": 2,
+    "model": "loginapp.EmailThread"
+  },
+  {
+    "fields": {
+     "title": "First Email Thread",
+      "parent_email_id": 3,
+      "child_email_id": 4
+    },
+    "pk": 3,
+    "model": "loginapp.EmailThread"
+  },
+  {
+    "fields": {
+     "title": "First Email Thread",
+      "parent_email_id": 4,
+      "child_email_id": 0
+    },
+    "pk": 4,
+    "model": "loginapp.EmailThread"
+  },
+  {
+    "fields": {
+     "title": "First Email Thread",
+      "parent_email_id": 5,
+      "child_email_id": 6
+    },
+    "pk": 5,
+    "model": "loginapp.EmailThread"
+  },
+  {
+    "fields": {
+     "title": "First Email Thread",
+      "parent_email_id": 6,
+      "child_email_id": 0
+    },
+    "pk": 6,
+    "model": "loginapp.EmailThread"
+  },
+  {
+    "fields": {
+     "title": "First Email Thread",
+      "parent_email_id": 7,
+      "child_email_id": 0
+    },
+    "pk": 7,
+    "model": "loginapp.EmailThread"
+  },    
+  {
+    "fields": {
+     "title": "Second Email Thread",
+      "parent_email_id": 8,
+      "child_email_id": 9
+    },
+    "pk": 8,
+    "model": "loginapp.EmailThread"
+  },
+  {
+    "fields": {
+     "title": "Second Email Thread",
+      "parent_email_id": 9,
+      "child_email_id": 0
+    },
+    "pk": 9,
+    "model": "loginapp.EmailThread"
+  },
+  {
+    "fields": {
+     "title": "Second Email Thread",
+      "parent_email_id": 10,
+      "child_email_id": 0
+    },
+    "pk": 10,
+    "model": "loginapp.EmailThread"
+  }
+]
+ 

@@ -42,110 +42,178 @@ def home(request):
 	if request.user.is_authenticated():
 		#retrieve a start session or create new
 		error_msg = ''
-	        session_count = Session_log.objects.filter(user=request.user,session_action='_start')
+	        session_count = Session_log.objects.filter(user=request.user,session_action='_start').count()
 		
 		user_content_count = UserConsent.objects.filter(user=request.user).count()
 		if user_content_count > 0:
 			user_content = UserConsent.objects.filter(user=request.user)[user_content_count - 1]
+		click_count = []
+		#all_threads = EmailThread.objects.raw('SELECT DISTINCT title FROM loginapp_emailthread' )
+		all_threads = EmailThread.objects.order_by('title').values_list('title', flat=True).distinct()
+		all_threads_count = sum(1 for result in all_threads)
+		random_int = sample(range(0,all_threads_count),1)
+        	rtitle = [obs for (i,obs) in enumerate(all_threads) if i in random_int]
 		
-		email_text1 = "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This the first email created for user: "+request.user.username
-		e1 = EmailThread.objects.create(text_doc = email_text1)
-		email_text2 = "Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This the first email created for user: This the second email created for user: "+request.user.username
-		e2 = EmailThread.objects.create(text_doc = email_text2)
-		remail = sample([e1,e2],1)[0]
-		if session_count.count() == 0:
-				session = Session_log.objects.create(user = request.user, session_action = '_start')  
-				source_doc = "This is the first knowledge source created for session id: "+str(session.id)
-				ks = KnowledgeSource(source_doc=source_doc)
-				ks.save()
-				
-				qs = Questions(answer = None , session=session)
-				qs.save()
-				user_content = UserConsent.objects.create(user=request.user,email_thread=remail,question=qs,knowledge_source=ks,session=session)
-				click_count = Click_log.objects.filter(user=request.user,session=session).count()
-				#content_create = 'true'			
-			 
+	
+		thread_emails = EmailThread.objects.filter(title = rtitle)
+		all_emails = EmailThread.objects.all()
+		rthread = str(rtitle)
+		#remail = sample([e1,e2],1)[0]
+		source_doc = "This is the first knowledge source created for this session id: "
+		ks = KnowledgeSource(source_doc=source_doc)
+		ks.save()
+		
+		if session_count == 0:
+			session = Session_log.objects.create(user = request.user, session_action = '_start')  				
+			user_content = UserConsent.objects.create(user=request.user,email_thread=rthread,knowledge_source=ks,session=session)			
+			for t in thread_emails:
+				var_click = Click_log.objects.filter(user=request.user,session=session, for_email = t.parent_email).count()
+				click_count.append(var_click)			 
 		else:
 			log_session = Session_log.objects.filter(user=request.user).latest('time_action')
-			if log_session.session_action == '_end':
-	
-				if request.method == 'POST' and 'end-session' in request.POST:
-					error_msg = 'This session has already ended. LOgout and login to start a new session'
+			if log_session.session_action == '_end':	
+				if request.method == 'POST' and 'end-survey' in request.POST:
+					error_msg = 'This session has already ended. Logout and login to start a new session'
 					session = log_session
-					user_content = UserConsent.objects.filter(user=request.user,session=session)
-					click_count = Click_log.objects.filter(user=request.user,session=session).count()
+					user_content_count = UserConsent.objects.filter(user=request.user,session=session)
+					user_content = UserConsent.objects.filter(user=request.user,session=session)[user_content_count - 1]
+					current_thread = user_content.email_thread
+					#thread_emails = EmailThread.objects.filter(title = current_thread)
+					rtitle = user_content.email_thread
+					#rtitle[0].replace("u'","")
+					#rtitle[0].replace("'","")
+					
+					thread_emails = EmailThread.objects.filter(title = rtitle)
+					for t in thread_emails:
+						click_count.append(Click_log.objects.filter(user=request.user,session=session, for_email = t.parent_email).count())
 				else:
-					session = Session_log.objects.create(user = request.user, session_action = '_start')
-					source_doc = "This is the first knowledge source created for session id: "+str(session.id)
-					ks = KnowledgeSource(source_doc=source_doc)
-					ks.save()
-					qs = Questions(answer = None , session=session)
-					qs.save()
-					user_content = UserConsent.objects.create(user=request.user,email_thread=remail,question=qs,knowledge_source=ks,session=session)
-					click_count = Click_log.objects.filter(user=request.user,session=session).count()
-					#content_create = 'true'
+					session = Session_log.objects.create(user = request.user, session_action = '_start')					
+					user_content = UserConsent.objects.create(user=request.user,email_thread=rthread,knowledge_source=ks,session=session)
+					for t in thread_emails:
+						click_count.append(Click_log.objects.filter(user=request.user,session=session,for_email = t.parent_email).count())					
 				
 			else:
 				session = log_session
-				#user_content = UserConsent.objects.filter(user=request.user)
-				user_content_count = UserConsent.objects.filter(user=request.user,session=session).count()
-				user_content = UserConsent.objects.filter(user=request.user)[user_content_count - 1]
-				click_count = Click_log.objects.filter(user=request.user,session=session).count()
-				#content_create = 'false'
-								
-		
-		
-		#user_content = None
-		#if content_create == 'true':
+				user_content_count = UserConsent.objects.filter(user=request.user,session=session).count()			
 				
-		#log.debug(user_content)
-		#else:
+				if user_content_count > 0:
+					user_content = UserConsent.objects.filter(user=request.user,session=session)[user_content_count - 1]
+				else:
+					user_content = UserConsent.objects.create(user=request.user,email_thread=rthread,knowledge_source=ks,session=session)
+				current_thread = user_content.email_thread
+				rtitle = user_content.email_thread
+				#rtitle[0].replace("u'","")
+				#rtitle[0].replace("'","")
 				
-		#log.debug(request.user)
-		log.debug("print:")
-		
+				thread_emails = EmailThread.objects.filter(title = rtitle)
+				#thread_emails = EmailThread.objects.filter(title = current_thread)
+				for t in thread_emails:
+					click_count.append(Click_log.objects.filter(user=request.user,session=session, for_email = t.parent_email).count())	
 
-		if request.method == 'POST' and 'hide-show' in request.POST:
+				#elif request.method == 'POST' and 'end-session' in request.POST:
+		if request.method == 'POST' and 'end-survey' in request.POST:
+			check_session = Session_log.objects.filter(user=request.user).latest('time_action')
+			if check_session.session_action == '_start':
+				Session_log.objects.create(user = request.user, session_action = '_end') 
+				#start = check_session.time_action
+				q1 = ''
+				if 'knowledge_source_relation' in request.POST:
+					q1 = request.POST['knowledge_source_relation']
+				q2 = ''
+				if 'subject_relation' in request.POST:
+					q2 = request.POST['subject_relation']
+				q2_extended = ''
+				if 'subject_list' in request.POST:
+					q2_extended = request.POST['subject_list']
+				q3 = ''
+				if 'association_reason' in request.POST:
+					q3 = request.POST['association_reason']
+				q4 = ''
+				if 'uncertain' in request.POST:
+					q4 = request.POST['uncertain']
+				q4_extended = ''
+				if 'uncertain_yes' in request.POST:
+					q4_extended = request.POST['uncertain_yes']
+				
+				
+				s_response = Survey_response.objects.create(q1 = q1, q2 = q2,q2_extended = q2_extended,q3= q3, q4= q4,q4_extended = q4_extended)
+				Survey.objects.create(session = check_session, survey_response = s_response,  timestamp_survey_start =request.POST['start_survey'])
+
+			else:
+				error_msg = 'This session has already ended. Logout and login to start a new session'
+
+		elif request.method == 'POST' and 'hide-show' in request.POST:
+			'''
 			show_count = int(request.POST.get('disp_email'))
 			if(show_count%2 == 0):
 				show_action = "_show";
 			else:
 				show_action = "_hide";
 			cl = Click_log.objects.create(user = request.user,session = session, click_action = show_action)
+			'''
+			i = 0
+			for t in thread_emails:
+				#t.parent_email
+				
+				if disp_email in request.POST and request.POST['idisp_email'] == i:
+					show_count = int(request.POST['disp_email'])
+					if(show_count%2 == 0):
+						show_action = "_show"
+					else:
+						show_action = "_hide"
+					cl = Click_log.objects.create(user = request.user,session = session, click_action = show_action, for_email = t.parent_email)
+					break				
+				i = i + 1
 
-		elif request.method == 'POST' and 'end-session' in request.POST:
-			check_session = Session_log.objects.filter(user=request.user).latest('time_action')
-			if check_session.session_action == '_start':
-				Session_log.objects.create(user = request.user, session_action = '_end') 
-			else:
-				error_msg = 'This session has already ended. LOgout and login to start a new session'
-
-		elif request.method == "POST" and 'bheight' in request.POST:
-        		#form = AdvertForm(request.POST)
-
-		        #message = 'something wrong!'
-		        #if(form.is_valid()):
-			#print(request.POST['title'])
-			log.debug(request.POST['bheight'])
-            		bheight = request.POST['bheight']
-			bwidth = request.POST['bwidth']
-			bl = Box_log.objects.create(user = request.user,session = session, width = bwidth,height = bheight)
-			log.debug(bheight)
-        		#return HttpResponse(json.dumps({'bheight': bheight,'bwidth':bwidth}))
-			return render(request,'home.html',{'user': request.user, 'session':session, 'user_content': user_content,'click_count':click_count, 'error_msg':error_msg,'bheight': bheight,'bwidth':bwidth})
+		elif request.method == "POST" and 'height_change' in request.POST:        
+			i = 0
+			box_height = []
+			box_width = []
+			for t in thread_emails:
+				var_htname = 'bheight_'+str(i)
+				var_wname = 'bwidth_'+str(i)
+				if var_htname in request.POST:
+					bheight = request.POST.get(var_htname)
+					bwidth = request.POST.get(var_wname)
+					bl = Box_log.objects.create(user = request.user,session = session, width = bwidth,height = bheight, for_email = t.parent_email)
+					box_height.append(bheight)
+					box_width.append(bwidth)
+				else:
+					bl_count = Box_log.objects.filter(user = request.user,session = session, for_email = t.parent_email).count()
+					#bl = Box_log.objects.filter(user = request.user,session = session, for_email = t.parent_email).order_by(id).reverse()[bl_count -1]
+					bl = Box_log.objects.filter(user = request.user,session = session, for_email = t.parent_email)[bl_count -1]
+					box_height.append(bl.height)
+					box_width.append(bl.width)
+					
+				i = i + 1
+			
+        		#thread_title = thread_emails[0].title
+			thread_count = thread_emails.count()
+			return render(request,'home.html',{'user': request.user,'all_emails':all_emails, 'session':session, 'thread_title': rtitle, 'thread_emails':thread_emails,'thread_count':thread_count,'click_count':click_count, 'error_msg':error_msg,'box_height': box_height,'box_width':box_width})
 		
 
-		elif request.method == "POST" and 'scroll_pos' in request.POST:
-        		
-			log.debug(request.POST['scroll_pos'])
-            		scroll_pos = request.POST['scroll_pos']
-			
-			sl = Box_scroll_log.objects.create(user = request.user,session = session, scrollbar_pos = scroll_pos)
-			
-        		#return HttpResponse(json.dumps({'bheight': bheight,'bwidth':bwidth}))
-			return render(request,'home.html',{'user': request.user, 'session':session, 'user_content': user_content,'click_count':click_count, 'error_msg':error_msg,'scroll_pos': scroll_pos})
+		elif request.method == "POST" and 'scroll_change' in request.POST:
+			i = 0
+			scroll_positions = []
+			for t in thread_emails:
+				var_sname = 'scroll_pos_'+str(i)
+				if var_sname in request.POST:
+					scroll_pos = request.POST.get(var_sname)
+					sl = Box_scroll_log.objects.create(user = request.user,session = session, scrollbar_pos = scroll_pos, for_email = t.parent_email)	
+					scroll_positions.append(scroll_pos)
+				else:
+					sl_count = Box_scroll_log.objects.filter(user = request.user,session = session, for_email = t.parent_email).count()
+					sl = Box_scroll_log.objects.filter(user = request.user,session = session, for_email = t.parent_email)(id)[sl_count -1]
+					scroll_positions.append(sl.scrollbar_pos)
 
-		#user_content.EmailThread.id = "does it exists?"
-    	return render(request,'home.html',{'user': request.user, 'session':session, 'user_content': user_content,'click_count':click_count, 'error_msg':error_msg})
+				i = i + 1
+			#thread_title = thread_emails[0].title	
+			thread_count = thread_emails.count()		
+        		return render(request,'home.html',{'user': request.user, 'all_emails':all_emails,'session':session, 'thread_title': rtitle, 'thread_emails':thread_emails,'thread_count':thread_count, 'click_count':click_count, 'error_msg':error_msg,'scroll_positions': scroll_positions})
+			
+			
+	#thread_title = thread_emails[0].title	
+	thread_count = thread_emails.count()
+    	return render(request,'home.html',{'user': request.user, 'all_emails':all_emails,'session':session, 'thread_title': rtitle, 'thread_emails':thread_emails,'thread_count':thread_count, 'click_count':click_count, 'error_msg':error_msg})
 
 		

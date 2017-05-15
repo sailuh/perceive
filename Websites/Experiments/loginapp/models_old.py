@@ -16,11 +16,14 @@ class Registration(models.Model):
 
 class EmailBody(models.Model):
 	body_text = models.TextField()
-
+'''
 class EmailThread(models.Model):
         title = models.TextField()
 	parent_email = models.ForeignKey(EmailBody, related_name = 'current_email')
 	child_email = models.ForeignKey(EmailBody, related_name = 'child_email',default = None, null=True, blank=True)
+'''
+class EmailThread(models.Model):
+	text_doc = models.TextField()
 
 class KnowledgeSource(models.Model):        
 	source_doc = models.TextField()
@@ -53,7 +56,7 @@ class Survey(models.Model):
 class UserConsent(models.Model):
 	user = models.ForeignKey(User)
 	session = models.ForeignKey(Session_log)
-	email_thread = models.TextField()	
+	email_thread = models.ForeignKey(EmailThread)	
 	knowledge_source = models.ForeignKey(KnowledgeSource)
 
 
@@ -68,7 +71,7 @@ class Click_log(models.Model):
 		(HIDE_ACTION,'_hide'),
 	)
 	click_action = models.CharField(choices = ACTION_CHOICES, default = SHOW_ACTION ,max_length=255)
-	for_email = models.ForeignKey(EmailBody)
+	
 
 class Box_log(models.Model):
 	user = models.ForeignKey(User)
@@ -76,14 +79,14 @@ class Box_log(models.Model):
 	timestamp_resize = models.DateTimeField(default=timezone.now)
 	width = models.CharField(max_length=35, null=True, default=None,blank=True)
 	height = models.CharField(max_length=35, null=True, default=None,blank=True)
-	for_email = models.ForeignKey(EmailBody)
+	
 
 class Box_scroll_log(models.Model):
 	user = models.ForeignKey(User)
 	session = models.ForeignKey(Session_log)
 	timestamp_resize = models.DateTimeField(default=timezone.now)
 	scrollbar_pos = models.CharField(max_length=35, null=False, default=None,blank=True)
-	for_email = models.ForeignKey(EmailBody)
+	
 
 
         

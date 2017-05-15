@@ -10,40 +10,28 @@
 
  </div>
   <div class="leftpane">
-   {{ thread_title }}
+    <h1>Email</h1>
        <form id = "email_form" method="post" action = "{% url 'home' %}">
 	{% csrf_token %}
-	<input type="text" id="thread_count" name="thread_count" value="{{thread_emails.count}}">
-		{% for t in thread_emails %}
-			{{ forloop.counter}} 
-			{% with forloop.counter as counter %}
-   				
-			{% for cc in click_count %} 
-				{% if forloop.counter == counter  %}
-					{% if cc|divisibleby:2 %}	
-						<p id="display_{{counter}}" style="visibility:visible;">{{ t.parent_email.body_text }} </p>
-					{% else %}
-						<p id="display_{{counter}}" style="display:none;">{{ t.parent_email.body_text }} </p>
-					{% endif %}
-				<input type="text" id="disp_email_{{counter}}" name="disp_email_{{counter}}" value="{{cc}}">
-			        {% endif %}	
-				
-			
-          	  	{% endfor %}
-			
-			<button name="hide-show_{{counter}}" type="submit" value="hide-show_{{counter}}" id="hide-show_{{counter}}">Hide/show</button>
-			{% endwith %}
-		
-		{% endfor %}
+	{%if click_count|divisibleby:2 %}
+		<p id="display" style="visibility:visible;">{{ user_content.email_thread.text_doc }} </p>
+	{% else %}
+		<p id="display" style="display:none;">{{ user_content.email_thread.text_doc }} </p>
+	{% endif %}
+	
+	<button name="hide-show" type="submit" value="hide-show" id="hide-show">Hide/show</button>
+	
+	<input type="hidden" id="disp_email" name="disp_email" value="{{click_count}}">
+           {{click_count}}
 	
 	</form>
-	{{ thread_emails}}
-	{{ thread_emails.count }}
-	
+	    
+
+
 	<form id="box-form" method="post" action="{% url 'home' %}">
 	{% csrf_token %}
 	<div id="box" style="overflow-y:scroll; ">
-    		<div>Resize me ! <br>THis box is for demo only<br></div>
+    		<div>Resize me ! <br>THis box is for demo only<br>{{ user_content.email_thread.text_doc }}</div>
 		    <div id="handle">
 			   
 			    
@@ -59,6 +47,15 @@
 		 <input type="hidden" id= "scroll_pos" type="text" name="scroll_pos">{{scroll_pos}}
 	
 	</form>
+
+	 <form id = "session_form" method="post" action = "{% url 'home' %}">
+	{% csrf_token %}
+
+	<input type="hidden" id="disp_session" name="disp_session" value="{{session.id}}">
+         <p style='color:red;'> {{error_msg}}</p>
+	<button type="submit" name="end-session" value="end-session" id="end-session">End session</button>
+	</form>
+
 	</div>
   <div class="middlepane"><h1>Question</h1>
 
@@ -112,6 +109,9 @@ If yes, please list them here, one per line having subject and reason separated 
   <div class="rightpane">
     <h1>Knowledge Source</h1></div>
 </div>
+
+   
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
@@ -169,75 +169,25 @@ function getTimeStamp() {
        return ((now.getMonth() + 1) + '/' + (now.getDate()) + '/' + now.getFullYear() + " " + now.getHours() + ':'
  + ((now.getMinutes() < 10) ? ("0" + now.getMinutes()) : (now.getMinutes())) + ':' + ((now.getSeconds() < 10) ? ("0" + now.getSeconds()) : (now.getSeconds())));
 }
-/*
-$(function() {
-       var i = 1;
-       for(i = 1; i <= 3; i++) {
-              //var equip = "equipment_type_"+i;
-              //var descr = "description_"+i;
-       $("#equipment_type_"+i).change(function() {
-        var equipment_idx = $(this).val();
-        var lineID = $(this)[0].id.slice(-1);
-          
-              $.ajax({
-                  type: "GET",                 
-                     url: "/json/commequipment/",
-                     data: { id: equipment_idx, type: equipment_idx, active: 1, available: 1},
-                     dataType: "json"
-              }).always(function(reply) {
-                     $("#description_"+lineID).find("option").remove();
-             
-              var options = [];
-              $('#description_'+lineID).append($('<option>').text("Select Equipment"));
-              //alert(JSON.stringify(reply));
-                    // Loop through JSON response
-                    $.each(reply.items, function(key, value) {  
-                    if(options.indexOf(value.EQUIPMENT_DESC) < 0) {
-                             options.push(value.EQUIPMENT_DESC);
-                             $('#description_'+lineID).append($('<option>', { value: value.EQUIPMENT_IDX }).text(value.EQUIPMENT_DESC));
-                             }
-                    });
-              });
- 
-       });
-      
-       }
-});
 
-
-
-*/
 
 $(document).ready(function(){
-
-	var input1 = $('input[name="subject_relation"]:checked').val();
-	var input2 = $('input[name="knowledge_source_relation"]:checked').val();
-	alert(input1);
-	var i = 0;
-	var z = $("#thread_count");
-	alert(z);
-		for(i=1;i<=z;i++){
-			 $("#hide-show_" + i).click(function(){
-       			 $("#display_"+ i).toggle();
-			 alert($(document).getElementById('disp_email_'+i).value+1);
-			 alert(i);
-			 $.ajax({
-				  	type: "POST",
-				  	url: {% url 'home' %},  	
-				  	disp_email: ($(document).getElementById('disp_email_'+i).value+1),
-					idisp_email : i,
-					hide-show = 'yes'
-				});
+ $("#hide-show").click(function(){
+       
 	
-				//return 1-hide 0-show
-			alert(idisp_email);
-			    });
-		}
+		$("#display").toggle();
+	$.ajax({
+  	type: "POST",
+  	url: {% url 'home' %},
+  	
+  	disp_email: ($(document).getElementById('disp_email').value+1)
+});
+	
+	//return 1-hide 0-show
+    });
 
-
-
-
-
+var input1 = $('input[name="subject_relation"]:checked').val();
+var input2 = $('input[name="knowledge_source_relation"]:checked').val();
 //alert(input1);
 });
 
