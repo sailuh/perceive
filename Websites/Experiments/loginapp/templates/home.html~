@@ -22,10 +22,22 @@
 				{% if forloop.counter == counter  %}
 				
 					{% if cc|divisibleby:2 %}	
+					<div style="overflow-y:scroll;visibility:visible;max-height:200px;">
 						<p id="display_{{counter}}" style="visibility:visible;">{{ t.parent_email.body_text }} </p>
+						<div id="handle_{{counter}}">
+			   
+			    
+						 </div>
+					</div>
 					{% else %}
+					<div style="overflow-y:scroll;display:none;">
 						<p id="display_{{counter}}" style="display:none;">{{ t.parent_email.body_text }} </p>
+						<div id="handle_{{counter}}">		   
+			    
+				         	 </div>
+					</div>
 					{% endif %}
+
 				<input type="hidden" id="disp_email_{{counter}}" name="disp_email_{{counter}}" value="{{cc}}">
 				
 			        {% endif %}	
@@ -45,21 +57,27 @@
 	<form id="box-form" method="post" action="{% url 'home' %}">
 	{% csrf_token %}
 	<div id="box" style="overflow-y:scroll; ">
-    		<div>Resize me ! <br>THis box is for demo only<br></div>
-		    <div id="handle">
+    		<div>Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created<br></div>
+		    <div id="handle" style="width:20px;height:20px;">
 			   
 			    
 		    </div>
 	</div>
-		 <input type="hidden" id= "ht" type="text" name="bheight">{{bheight}}<br><br>
-		<input type="hidden" id= "wt" type="text" name="bwidth">{{bwidth}}
+		 <input type="hidden" id= "ht"  name="bheight">{{bheight}}<br><br>
+    		 <input type="hidden" id= "wt"  name="bwidth">{{bwidth}}
+		 <input type="hidden" id= "height_change" value='Yes'>
+		<input type="hidden" value = "2" name="iheight_email">
 	</form> <br><br>
 	<div id="output"></div>
 	<form id="box1-form" method="post"  action="{% url 'home' %}">
 	{% csrf_token %}
   	
-		 <input type="hidden" id= "scroll_pos" type="text" name="scroll_pos">{{scroll_pos}}
-	
+		 <input type="hidden" id= "scroll_pos"  name="scroll_pos">{{scroll_pos}}
+		 <input type="hidden" id= "scroll_change" value = 'Yes' name="scroll_change">
+		 <input type="hidden" value = "2" name="idisp_email">
+		 <input type="hidden" id= "ht_scroll"  name="bheight">{{bheight}}<br><br>
+    		 <input type="hidden" id= "wt_scroll"  name="bwidth">{{bwidth}}
+		 
 	</form>
 	</div>
   <div class="middlepane"><h1>Question</h1>
@@ -280,10 +298,7 @@ $(document).ready(function(){
 	
 		$("#hide_show_3").click(function(){
 			alert("clicked");
-       			$("#display_3").toggle();
-			
-			//var countval = parseInt($(document).getElementById('disp_email_1').value) + 1;
-			//console.log($(document).getElementById('disp_email_1').text);
+       			$("#display_3").toggle();			
 			alert("countval3="+countval3);
 			$('#disp_email_3').val(countval3);
 			console.log("countval3="+countval3.toString());
@@ -307,10 +322,6 @@ $(document).ready(function(){
 				//return 1-hide 0-show
 			
 			    });
-
-
-
-	 
 
 	 
 });
@@ -340,8 +351,8 @@ function stopResizing(e) {
 	
 $("#box-form").submit(function(e) {
 	 $.ajax({ 
-        url: $("#box-form").attr('action'),
-        data: {bheight: $('#ht').val(),bwidth:$('#wt').val()},
+        url: $("#email_form").attr('action'),
+        data: {bheight: $('#ht').val(),bwidth:$('#wt').val(), height_change: 'yes',iheight_email:3, csrfmiddlewaretoken: '{{ csrf_token }}'},
         type: 'POST',
         success: function(data) {
             //alert(data);
@@ -359,8 +370,9 @@ $("#box-form").submit(function(e) {
  $("#box").mouseup(function(){
  $.ajax({
 	type: 'POST',
-        url: $('#box-form').attr('action'),
-	data: $('#box-form').serialize(), // serializes the form's elements.
+        url: $('#email-form').attr('action'),
+	//data: {bheight: $('#ht').val(),bwidth:$('#wt').val(), height_change: 'yes',iheight_email:3, csrfmiddlewaretoken: '{{ csrf_token }}'}, // serializes the form's elements.
+	data : $('#box-form').serialize(),
 	success: function(data){         
 		//alert(data); // show response from the php script.
            		}
@@ -382,11 +394,14 @@ $("#box-form").submit(function(e) {
     			$.data( this, "scrollCheck", 
 				setTimeout(function() {
     					$output.html( stopped );
-					document.getElementById('scroll_pos').value  = $("#box").scrollTop();				
+					document.getElementById('scroll_pos').value  = $("#box").scrollTop();	
+					document.getElementById('ht_scroll').value = box.style.height;
+					document.getElementById('wt_scroll').value = box.style.width;  			
 					 $.ajax({
            					type: "POST",
 					        url: $("#box-form").attr('action'),
-						data: $("#box1-form").serialize(), // serializes the form's elements.
+						//data: {scroll_pos: $('#scroll_pos').val(),scroll_change: 'yes',idisp_email:3}, // serializes the form's elements.
+						data : $('#box1-form').serialize(),
 					        success: function(data)
            					{
 					               alert(data); // show response from the php script.

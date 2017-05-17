@@ -145,15 +145,8 @@ def home(request):
 				error_msg = 'This session has already ended. Logout and login to start a new session'
 
 		elif request.method == 'POST' and 'hide_show' in request.POST:
-			'''
-			show_count = int(request.POST.get('disp_email'))
-			if(show_count%2 == 0):
-				show_action = "_show";
-			else:
-				show_action = "_hide";
-			cl = Click_log.objects.create(user = request.user,session = session, click_action = show_action)
-			'''
-			i = 0
+			
+			i = 1
 			for t in thread_emails:
 				#t.parent_email
 				log.debug(request.POST['idisp_email'])
@@ -161,6 +154,7 @@ def home(request):
 					show_count = int(request.POST['disp_email'])
 					log.debug(show_count)
 					show_count = Click_log.objects.filter(user = request.user,session = session,for_email = t.parent_email).count()
+					show_count += 1
 					if(show_count%2 == 0):
 						show_action = "_show"
 					else:
@@ -170,18 +164,17 @@ def home(request):
 				i = i + 1
 
 		elif request.method == "POST" and 'height_change' in request.POST:        
-			i = 0
+			i = 1
 			box_height = []
 			box_width = []
 			for t in thread_emails:
-				var_htname = 'bheight_'+str(i)
-				var_wname = 'bwidth_'+str(i)
-				if var_htname in request.POST:
-					bheight = request.POST.get(var_htname)
-					bwidth = request.POST.get(var_wname)
-					bl = Box_log.objects.create(user = request.user,session = session, width = bwidth,height = bheight, for_email = t.parent_email)
-					box_height.append(bheight)
-					box_width.append(bwidth)
+				if 'bheight' in request.POST  :
+					var_htname = request.POST.get('bheight')
+					var_wname = request.POST.get('bwidth')
+				
+					bl = Box_log.objects.create(user = request.user,session = session, width = var_wname,height = var_htname, for_email = t.parent_email)
+					box_height.append(var_htname)
+					box_width.append(var_wname)
 				else:
 					bl_count = Box_log.objects.filter(user = request.user,session = session, for_email = t.parent_email).count()
 					#bl = Box_log.objects.filter(user = request.user,session = session, for_email = t.parent_email).order_by(id).reverse()[bl_count -1]
@@ -197,18 +190,25 @@ def home(request):
 		
 
 		elif request.method == "POST" and 'scroll_change' in request.POST:
-			i = 0
+			i = 1
 			scroll_positions = []
-			for t in thread_emails:
-				var_sname = 'scroll_pos_'+str(i)
-				if var_sname in request.POST:
-					scroll_pos = request.POST.get(var_sname)
+			for t in thread_emails:				
+				if 'scroll_pos' in request.POST and int(request.POST['idisp_email']) == int(i) :
+					scroll_pos = int(request.POST.get('scroll_pos'))
 					sl = Box_scroll_log.objects.create(user = request.user,session = session, scrollbar_pos = scroll_pos, for_email = t.parent_email)	
 					scroll_positions.append(scroll_pos)
+					if 'bheight' in request.POST:
+						var_htname = request.POST.get('bheight')
+						var_wname = request.POST.get('bwidth')
+					
+						bl = Box_log.objects.create(user = request.user,session = session, width = var_wname,height = var_htname, for_email = t.parent_email)
 				else:
 					sl_count = Box_scroll_log.objects.filter(user = request.user,session = session, for_email = t.parent_email).count()
-					sl = Box_scroll_log.objects.filter(user = request.user,session = session, for_email = t.parent_email)(id)[sl_count -1]
-					scroll_positions.append(sl.scrollbar_pos)
+					if sl_count == 0:
+						scroll_positions.append(0)
+					else:
+						sl = Box_scroll_log.objects.filter(user = request.user,session = session, for_email = t.parent_email)[sl_count -1]
+						scroll_positions.append(sl.scrollbar_pos)
 
 				i = i + 1
 			#thread_title = thread_emails[0].title	

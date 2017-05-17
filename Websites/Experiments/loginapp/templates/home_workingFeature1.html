@@ -13,25 +13,27 @@
    {{ thread_title }}
        <form id = "email_form" method="post" action = "{% url 'home' %}">
 	{% csrf_token %}
-	<input type="text" id="thread_count" name="thread_count" value="{{thread_emails.count}}">
+	<input type="hidden" id="thread_count" name="thread_count" value="{{thread_emails.count}}">
 		{% for t in thread_emails %}
-			{{ forloop.counter}} 
+			
 			{% with forloop.counter as counter %}
    				
 			{% for cc in click_count %} 
 				{% if forloop.counter == counter  %}
+				
 					{% if cc|divisibleby:2 %}	
 						<p id="display_{{counter}}" style="visibility:visible;">{{ t.parent_email.body_text }} </p>
 					{% else %}
 						<p id="display_{{counter}}" style="display:none;">{{ t.parent_email.body_text }} </p>
 					{% endif %}
-				<input type="text" id="disp_email_{{counter}}" name="disp_email_{{counter}}" value="{{cc}}">
+				<input type="hidden" id="disp_email_{{counter}}" name="disp_email_{{counter}}" value="{{cc}}">
+				
 			        {% endif %}	
 				
 			
           	  	{% endfor %}
 			
-			<button name="hide-show_{{counter}}" type="submit" value="hide-show_{{counter}}" id="hide-show_{{counter}}">Hide/show</button>
+			<button name="hide_show_{{counter}}" type="submit" value="hide_show_{{counter}}" id="hide_show_{{counter}}">Hide/show</button>
 			{% endwith %}
 		
 		{% endfor %}
@@ -169,44 +171,7 @@ function getTimeStamp() {
        return ((now.getMonth() + 1) + '/' + (now.getDate()) + '/' + now.getFullYear() + " " + now.getHours() + ':'
  + ((now.getMinutes() < 10) ? ("0" + now.getMinutes()) : (now.getMinutes())) + ':' + ((now.getSeconds() < 10) ? ("0" + now.getSeconds()) : (now.getSeconds())));
 }
-/*
-$(function() {
-       var i = 1;
-       for(i = 1; i <= 3; i++) {
-              //var equip = "equipment_type_"+i;
-              //var descr = "description_"+i;
-       $("#equipment_type_"+i).change(function() {
-        var equipment_idx = $(this).val();
-        var lineID = $(this)[0].id.slice(-1);
-          
-              $.ajax({
-                  type: "GET",                 
-                     url: "/json/commequipment/",
-                     data: { id: equipment_idx, type: equipment_idx, active: 1, available: 1},
-                     dataType: "json"
-              }).always(function(reply) {
-                     $("#description_"+lineID).find("option").remove();
-             
-              var options = [];
-              $('#description_'+lineID).append($('<option>').text("Select Equipment"));
-              //alert(JSON.stringify(reply));
-                    // Loop through JSON response
-                    $.each(reply.items, function(key, value) {  
-                    if(options.indexOf(value.EQUIPMENT_DESC) < 0) {
-                             options.push(value.EQUIPMENT_DESC);
-                             $('#description_'+lineID).append($('<option>', { value: value.EQUIPMENT_IDX }).text(value.EQUIPMENT_DESC));
-                             }
-                    });
-              });
- 
-       });
-      
-       }
-});
 
-
-
-*/
 
 $(document).ready(function(){
 
@@ -214,32 +179,136 @@ $(document).ready(function(){
 	var input2 = $('input[name="knowledge_source_relation"]:checked').val();
 	alert(input1);
 	var i = 0;
-	var z = $("#thread_count");
-	alert(z);
-
-		for(i=1;i<=z;i++){
+	var z = $("#thread_count").val();
+	//alert("z="+z);
+	console.log("z="+z);
+	var countval = parseInt(document.getElementById('disp_email_1').value) + 1;
+	console.log(document.getElementById('disp_email_1').value);
+	var countval2 = parseInt(document.getElementById('disp_email_2').value) + 1;
+	var countval3 = parseInt(document.getElementById('disp_email_3').value) + 1;
+	//console.log(z);
+	
+		/*for(i=1;i<=z;i++){
+			alert("I-"+i);
 			 $("#hide-show_" + i).click(function(){
-       			 $("#display_"+ i).toggle();
-			 alert($(document).getElementById('disp_email_'+i).value+1);
-			 alert(i);
+       					 $("#display_"+ i).toggle();
+					 alert($(document).getElementById('disp_email_'+i).value+1);
+					 document.getElementById('disp_email_'+i).value += 1
+					 alert("i="+i);
+					 $.ajax({
+				  		
+				  		url: {% url 'home' %},  
+						data: {disp_email: countval, idisp_email : i, hide_show : 'yes', csrfmiddlewaretoken: '{{ csrf_token }}',},	
+				  		type: "POST",
+						 success: function(data) {
+        	   					 alert(data);
+	           				 },
+				   		error: function (request, status, error) {
+       							 alert(request.responseText);
+   						 } 
+
+					}); 
+	
+				//return 1-hide 0-show
+			
+			    });
+		}*/
+	
+	 $("#hide_show_1").click(function(){
+			alert("clicked");
+       			$("#display_1").toggle();
+			
+			//var countval = parseInt($(document).getElementById('disp_email_1').value) + 1;
+			//console.log($(document).getElementById('disp_email_1').text);
+			alert("countval="+countval);
+			$('#disp_email_1').val(countval);
+			console.log("countval="+countval.toString());
+			console.log($('#disp_email_1').val().toString());
+			alert("disp_val = "+$('#disp_email_1').val());
+			
 			 $.ajax({
-				  	type: "POST",
-				  	url: {% url 'home' %},  	
-				  	disp_email: ($(document).getElementById('disp_email_'+i).value+1),
-					idisp_email : i,
-					hide-show = 'yes'
+				  
+				  url: $("#email_form").attr('action'),	
+				  data: {disp_email: countval, idisp_email : 1, hide_show : 'yes', csrfmiddlewaretoken: '{{ csrf_token }}',},
+				  type: "POST",
+				  success: function(data) {
+           					 alert(data);
+           				 },
+				   error: function (request, status, error) {
+       						 alert(request.responseText);
+   					 } 		 
+				 
 				});
 	
 				//return 1-hide 0-show
-			alert(idisp_email);
+			
 			    });
-		}
 
 
+ 	$("#hide_show_2").click(function(){
+			alert("clicked");
+       			$("#display_2").toggle();
+			
+			//var countval = parseInt($(document).getElementById('disp_email_1').value) + 1;
+			//console.log($(document).getElementById('disp_email_1').text);
+			alert("countval2="+countval2);
+			$('#disp_email_2').val(countval2);
+			console.log("countval2="+countval2.toString());
+			console.log($('#disp_email_2').val().toString());
+			alert("disp_val = "+$('#disp_email_2').val());
+			
+			 $.ajax({
+				  
+				  url: $("#email_form").attr('action'),	
+				  data: {disp_email: countval2, idisp_email : 2, hide_show : 'yes', csrfmiddlewaretoken: '{{ csrf_token }}',},
+				  type: "POST",
+				  success: function(data) {
+           					 alert(data);
+           				 },
+				   error: function (request, status, error) {
+       						 alert(request.responseText);
+   					 } 		 
+				 
+				});
+	
+				//return 1-hide 0-show
+			
+			    });
 
 
+	
+	
+		$("#hide_show_3").click(function(){
+			alert("clicked");
+       			$("#display_3").toggle();
+			
+			//var countval = parseInt($(document).getElementById('disp_email_1').value) + 1;
+			//console.log($(document).getElementById('disp_email_1').text);
+			alert("countval3="+countval3);
+			$('#disp_email_3').val(countval3);
+			console.log("countval3="+countval3.toString());
+			console.log($('#disp_email_3').val().toString());
+			alert("disp_val = "+$('#disp_email_3').val());
+			
+			 $.ajax({
+				  
+				  url: $("#email_form").attr('action'),	
+				  data: {disp_email: countval3, idisp_email : 3, hide_show : 'yes', csrfmiddlewaretoken: '{{ csrf_token }}',},
+				  type: "POST",
+				  success: function(data) {
+           					 alert(data);
+           				 },
+				   error: function (request, status, error) {
+       						 alert(request.responseText);
+   					 } 		 
+				 
+				});
+	
+				//return 1-hide 0-show
+			
+			    });
 
-//alert(input1);
+	 
 });
 
 
@@ -306,30 +375,28 @@ $("#box-form").submit(function(e) {
 		    $( "#box" ).scroll(function() {
 		    	$output.html( scrolling );
     			clearTimeout( $.data( this, "scrollCheck" ) );
-    			$.data( this, "scrollCheck", setTimeout(function() {
-    				$output.html( stopped );
-				//alert($("#box").scrollTop());
-				document.getElementById('scroll_pos').value  = $("#box").scrollTop();
-				//alert(Math.max( $("#box").clientHeight, $("#box").scrollHeight, $("#box").offsetHeight );
-				//alert(document.getElementById('scroll_pos').value);
-				//alert($("#scroll_pos").val());
-				 $.ajax({
-           				type: "POST",
-				        url: $("#box-form").attr('action'),
-					data: $("#box1-form").serialize(), // serializes the form's elements.
-				        success: function(data)
-           				{
-				               //alert(data); // show response from the php script.
-           				}
-         				});
+    			$.data( this, "scrollCheck", 
+				setTimeout(function() {
+    					$output.html( stopped );
+					document.getElementById('scroll_pos').value  = $("#box").scrollTop();				
+					 $.ajax({
+           					type: "POST",
+					        url: $("#box-form").attr('action'),
+						data: $("#box1-form").serialize(), // serializes the form's elements.
+					        success: function(data)
+           					{
+					               alert(data); // show response from the php script.
+           					}
+         					});
 				
-    			}, 250) );
+    				}, 250) );
 
     		});
 
 	});
 
 })( jQuery );
+
 
  
 
