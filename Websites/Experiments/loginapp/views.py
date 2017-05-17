@@ -41,6 +41,8 @@ def logout_page(request):
 def home(request):
 	if request.user.is_authenticated():
 		#retrieve a start session or create new
+		if request.method == 'POST':
+			log.debug(request.POST)
 		error_msg = ''
 	        session_count = Session_log.objects.filter(user=request.user,session_action='_start').count()
 		
@@ -142,7 +144,7 @@ def home(request):
 			else:
 				error_msg = 'This session has already ended. Logout and login to start a new session'
 
-		elif request.method == 'POST' and 'hide-show' in request.POST:
+		elif request.method == 'POST' and 'hide_show' in request.POST:
 			'''
 			show_count = int(request.POST.get('disp_email'))
 			if(show_count%2 == 0):
@@ -154,9 +156,12 @@ def home(request):
 			i = 0
 			for t in thread_emails:
 				#t.parent_email
-				
-				if disp_email in request.POST and request.POST['idisp_email'] == i:
+				log.debug(request.POST['idisp_email'])
+				if 'disp_email' in request.POST and int(request.POST['idisp_email']) == int(i) :
 					show_count = int(request.POST['disp_email'])
+					log.debug(show_count)
+					show_count = Click_log.objects.filter(user = request.user,session = session,for_email = t.parent_email).count()
+					show_count += 1
 					if(show_count%2 == 0):
 						show_action = "_show"
 					else:
