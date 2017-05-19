@@ -61,9 +61,9 @@ def home(request):
 		all_emails = EmailThread.objects.all()
 		rthread = str(rtitle)
 		#remail = sample([e1,e2],1)[0]
-		source_doc = "This is the first knowledge source created for this session id: "
-		ks = KnowledgeSource(source_doc=source_doc)
-		ks.save()
+		source_doc = "This is the first knowledge source created for this session"
+		ks = KnowledgeSource.objects.create(source_doc=source_doc)
+		
 		
 		if session_count == 0:
 			session = Session_log.objects.create(user = request.user, session_action = '_start')  				
@@ -78,7 +78,7 @@ def home(request):
 					error_msg = 'This session has already ended. Logout and login to start a new session'
 					session = log_session
 					user_content_count = UserConsent.objects.filter(user=request.user,session=session)
-					user_content = UserConsent.objects.filter(user=request.user,session=session)[user_content_count - 1]
+					user_content = UserConsent.objects.get(user=request.user,session=session)
 					current_thread = user_content.email_thread
 					#thread_emails = EmailThread.objects.filter(title = current_thread)
 					rtitle = user_content.email_thread
@@ -99,7 +99,7 @@ def home(request):
 				user_content_count = UserConsent.objects.filter(user=request.user,session=session).count()			
 				
 				if user_content_count > 0:
-					user_content = UserConsent.objects.filter(user=request.user,session=session)[user_content_count - 1]
+					user_content = UserConsent.objects.filter(user=request.user,session=session)
 				else:
 					user_content = UserConsent.objects.create(user=request.user,email_thread=rthread,knowledge_source=ks,session=session)
 				current_thread = user_content.email_thread
@@ -186,7 +186,7 @@ def home(request):
 			
         		#thread_title = thread_emails[0].title
 			thread_count = thread_emails.count()
-			return render(request,'home.html',{'user': request.user,'all_emails':all_emails, 'session':session, 'thread_title': rtitle, 'thread_emails':thread_emails,'thread_count':thread_count,'click_count':click_count, 'error_msg':error_msg,'box_height': box_height,'box_width':box_width})
+			return render(request,'home.html',{'user': request.user,'all_emails':all_emails, 'session':session, 'thread_title': rtitle, 'thread_emails':thread_emails,'thread_count':thread_count,'click_count':click_count, 'error_msg':error_msg,'box_height': box_height,'box_width':box_width, 'ks':ks})
 		
 
 		elif request.method == "POST" and 'scroll_change' in request.POST:
@@ -213,11 +213,11 @@ def home(request):
 				i = i + 1
 			#thread_title = thread_emails[0].title	
 			thread_count = thread_emails.count()		
-        		return render(request,'home.html',{'user': request.user, 'all_emails':all_emails,'session':session, 'thread_title': rtitle, 'thread_emails':thread_emails,'thread_count':thread_count, 'click_count':click_count, 'error_msg':error_msg,'scroll_positions': scroll_positions})
+        		return render(request,'home.html',{'user': request.user, 'all_emails':all_emails,'session':session, 'thread_title': rtitle, 'thread_emails':thread_emails,'thread_count':thread_count, 'click_count':click_count, 'error_msg':error_msg,'scroll_positions': scroll_positions, 'ks':ks})
 			
 			
 	#thread_title = thread_emails[0].title	
 	thread_count = thread_emails.count()
-    	return render(request,'home.html',{'user': request.user, 'all_emails':all_emails,'session':session, 'thread_title': rtitle, 'thread_emails':thread_emails,'thread_count':thread_count, 'click_count':click_count, 'error_msg':error_msg})
+    	return render(request,'home.html',{'user': request.user, 'all_emails':all_emails,'session':session, 'thread_title': rtitle, 'thread_emails':thread_emails,'thread_count':thread_count, 'click_count':click_count, 'error_msg':error_msg,'ks':ks})
 
 		

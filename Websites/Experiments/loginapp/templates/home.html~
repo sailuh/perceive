@@ -51,22 +51,22 @@
 		{% endfor %}
 	
 	</form>
-	{{ thread_emails}}
-	{{ thread_emails.count }}
+	
+	<p>No of emails in this thread: {{ thread_emails.count }}</p>
 	
 	<form id="box-form" method="post" action="{% url 'home' %}">
 	{% csrf_token %}
 	<div id="box" style="overflow-y:scroll; ">
     		<div>Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created<br></div>
-		    <div id="handle" style="width:20px;height:20px;">
-			   
+		    <div id="handle" style="width:20px;height:20px;">	   
 			    
 		    </div>
 	</div>
+
 		 <input type="hidden" id= "ht"  name="bheight">{{bheight}}<br><br>
     		 <input type="hidden" id= "wt"  name="bwidth">{{bwidth}}
 		 <input type="hidden" id= "height_change" value='Yes'>
-		<input type="hidden" value = "2" name="iheight_email">
+		 <input type="hidden" value = "2" name="iheight_email">
 	</form> <br><br>
 	<div id="output"></div>
 	<form id="box1-form" method="post"  action="{% url 'home' %}">
@@ -84,7 +84,7 @@
 
 	 <h3> Please answer the following questions: </h3>
 
-		<form id="form-survey" style="width=100%;" method="post" action="{% url 'home' %}">
+		<form id="form-survey" style="width:100%;" method="post" action="{% url 'home' %}">
         {% csrf_token %}
 
 	<fieldset >
@@ -130,7 +130,37 @@ If yes, please list them here, one per line having subject and reason separated 
 
   </div>
   <div class="rightpane">
-    <h1>Knowledge Source</h1></div>
+    <h1>Knowledge Source</h1>
+	<p> {{ks.source_doc}}</p>
+
+
+
+	 <h5>Data</h5>
+  <P>chocolate, strawberry, vanilla, strawberry, vanilla, vanilla, strawberry, vanilla, vanilla </P>
+  <h5>Information - this is a list of flavour of ice cream sales yesterday.</h5>
+  <P>The data now has some context and so make sense. A bit of analysis is useful to glean more information.</P>
+  <P>For example, the most popular flavour of ice cream sold yesterday is vanilla.</P>
+  <h5>Knowledge</h5>
+  <P>The shop manager can see that vanilla is the most popular ice-cream flavour. Next time he places an order, he will ask for five times as much vanilla ice-cream than chocolate ice-cream. </P>
+  <P>&nbsp;</P>
+  <h4>Example 3 </h4>
+  <h5>Data</h5>
+  <P>14-05-08, 09-10-08, 21-11-08, 09-09-08, 31-07-08 </P>
+  <h5>Information - these are a list of dates in dd/mm/yy format. They are booked dates for a holiday cottage.</h5>
+  <P>Now that the format of the data is known, it can be processed further. For example, they could be sorted into time order</P>
+  <P>The dates are sorted into order:</P>
+  <ul>
+    <li>14th May 2008</li>
+    <li>31st July 2008 </li>
+    <li>9th September 2008 </li>
+    <li>9th October 2008</li>
+    <li>21st November 2008    </li>
+
+</div>
+	
+  </ul>
+  <h5>Knowledge</h5>
+  <P>The owner of the holiday cottage can see that it has hardly been rented over the summer period. She might decide to lower her rental price in order  to get extra bookings. </P>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -140,9 +170,9 @@ If yes, please list them here, one per line having subject and reason separated 
 	var input1 = $('input[name=knowledge_source_relation]:checked').val();
 	var input2 = $('input[name=subject_relation]:checked').val();
 	
-	alert(input1);
+	//alert(input1);
 	
-	alert(input2);
+	//alert(input2);
 	if(input1 == 'dont_know' && input2 == 'dont_know')
     		$('#q3').hide();    
 	else
@@ -162,9 +192,9 @@ $('input[type=radio][name=knowledge_source_relation]').change(function() {
 	var input1 = $('input[name=knowledge_source_relation]:checked').val();
 	var input2 = $('input[name=subject_relation]:checked').val();
 	
-	alert(input1);
+	//alert(input1);
 	
-	alert(input2);
+	//alert(input2);
 
 	if(input2 == 'yes'){
 		$('#display_q2').show();
@@ -195,7 +225,7 @@ $(document).ready(function(){
 
 	var input1 = $('input[name="subject_relation"]:checked').val();
 	var input2 = $('input[name="knowledge_source_relation"]:checked').val();
-	alert(input1);
+	//alert(input1);
 	var i = 0;
 	var z = $("#thread_count").val();
 	//alert("z="+z);
@@ -233,16 +263,16 @@ $(document).ready(function(){
 		}*/
 	
 	 $("#hide_show_1").click(function(){
-			alert("clicked");
+			//alert("clicked");
        			$("#display_1").toggle();
 			
 			//var countval = parseInt($(document).getElementById('disp_email_1').value) + 1;
 			//console.log($(document).getElementById('disp_email_1').text);
-			alert("countval="+countval);
+			//alert("countval="+countval);
 			$('#disp_email_1').val(countval);
 			console.log("countval="+countval.toString());
 			console.log($('#disp_email_1').val().toString());
-			alert("disp_val = "+$('#disp_email_1').val());
+			//alert("disp_val = "+$('#disp_email_1').val());
 			
 			 $.ajax({
 				  
@@ -264,16 +294,16 @@ $(document).ready(function(){
 
 
  	$("#hide_show_2").click(function(){
-			alert("clicked");
+			//alert("clicked");
        			$("#display_2").toggle();
 			
 			//var countval = parseInt($(document).getElementById('disp_email_1').value) + 1;
 			//console.log($(document).getElementById('disp_email_1').text);
-			alert("countval2="+countval2);
+			//alert("countval2="+countval2);
 			$('#disp_email_2').val(countval2);
 			console.log("countval2="+countval2.toString());
 			console.log($('#disp_email_2').val().toString());
-			alert("disp_val = "+$('#disp_email_2').val());
+			//alert("disp_val = "+$('#disp_email_2').val());
 			
 			 $.ajax({
 				  
@@ -297,13 +327,13 @@ $(document).ready(function(){
 	
 	
 		$("#hide_show_3").click(function(){
-			alert("clicked");
+			//alert("clicked");
        			$("#display_3").toggle();			
-			alert("countval3="+countval3);
+			//alert("countval3="+countval3);
 			$('#disp_email_3').val(countval3);
 			console.log("countval3="+countval3.toString());
 			console.log($('#disp_email_3').val().toString());
-			alert("disp_val = "+$('#disp_email_3').val());
+			//alert("disp_val = "+$('#disp_email_3').val());
 			
 			 $.ajax({
 				  
@@ -404,7 +434,7 @@ $("#box-form").submit(function(e) {
 						data : $('#box1-form').serialize(),
 					        success: function(data)
            					{
-					               alert(data); // show response from the php script.
+					               //alert(data); // show response from the php script.
            					}
          					});
 				
