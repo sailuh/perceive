@@ -4,48 +4,215 @@
 {% block content %}
     
 <div class="container">
-  <div class="toppane">
+<p style='color:red;'> {{error_msg}}</p>
+<div class="toppane">
+<p>Hello {{ user.username }} !!! <a href="/logout/" style="float:right;">Logout</a></p>
 
-<p>Welcome {{ user.username }} !!!</p></div>
+ </div>
   <div class="leftpane">
-    <h1>Email</h1>
+   {{ thread_title }}
        <form id = "email_form" method="post" action = "{% url 'home' %}">
 	{% csrf_token %}
-	{%if click_count|divisibleby:2 %}
-		<p id="display" style="display:none;">{{ user_content.email_thread.text_doc }} </p>
-	{% else %}
-		<p id="display" style="visibility:visible;">{{ user_content.email_thread.text_doc }} </p>
-	{% endif %}
-	
-	<button name="hide-show" type="submit" value="hide-show" id="hide-show">Hide/show</button>
-	
-	<input type="hidden" id="disp_email" name="disp_email" value="{{click_count}}">
-           {{click_count}}
+	<input type="hidden" id="thread_count" name="thread_count" value="{{thread_emails.count}}">
+		{% for t in thread_emails %}
+			
+			{% with forloop.counter as counter %}
+   				
+			{% for cc in click_count %} 
+				{% if forloop.counter == counter  %}
+				
+					{% if cc|divisibleby:2 %}	
+					<div style="overflow-y:scroll;visibility:visible;max-height:200px;">
+						<p id="display_{{counter}}" style="visibility:visible;">{{ t.parent_email.body_text }} </p>
+						<div id="handle_{{counter}}">
+			   
+			    
+						 </div>
+					</div>
+					{% else %}
+					<div style="overflow-y:scroll;display:none;">
+						<p id="display_{{counter}}" style="display:none;">{{ t.parent_email.body_text }} </p>
+						<div id="handle_{{counter}}">		   
+			    
+				         	 </div>
+					</div>
+					{% endif %}
+
+				<input type="hidden" id="disp_email_{{counter}}" name="disp_email_{{counter}}" value="{{cc}}">
+				
+			        {% endif %}	
+				
+			
+          	  	{% endfor %}
+			
+			<button name="hide_show_{{counter}}" type="submit" value="hide_show_{{counter}}" id="hide_show_{{counter}}">Hide/show</button>
+			{% endwith %}
+		
+		{% endfor %}
 	
 	</form>
 	
-       <form id = "session_form" method="post" action = "{% url 'home' %}">
+	<p>No of emails in this thread: {{ thread_emails.count }}</p>
+	
+	<form id="box-form" method="post" action="{% url 'home' %}">
 	{% csrf_token %}
+	<div id="box" style="overflow-y:scroll; ">
+    		<div>Present random thread/knowledge source question Scenario:User should only be able to see this page upon successful authentication, which defines a session.One random e-mail thread and one associated knowledge source must be loaded into the questionnaire interface for the user to answer.In this scenario, the user interacts with the questionnaire interface through features 1,2 and 3 and the interaction is logged on the database as it is performed, so in case the user is interrupted / loss of connection / the session can be recovered, as well as the trace of the log.Only after All answers have been chosen, the user can submit the question. User should not be allowed to be presented other question otherwise, and the only means to move to the next presentation of e-mail thread/knowledge source is by submitting the answers (this ensures we dont have inconsistent answers all over the place. The questions allow for I dont knows so this is still safe).Once the user hits submit button, then the information of the questions is also stored, referring to the logs (note again: The logs should be stored as interactions are performed, so the schema needs to store questionaire answers and logs in separate tables so it can be stored in separate points in time). A new random e-mail thread and associated knowledge source is loaded and the scenario repeats.At any moment the user can click somewhere a log-off button or may lose connection. In both cases, the information should be reloaded from the interrupted session, but the next time the user logins / reestablish connection it should be considered a new session, albeit pointing to the same question / interaction log to the question. Concretely this means more than one session may point to the same question interaction log, which again requires the logs to be in separate tables.This is an example email created<br></div>
+		    <div id="handle" style="width:20px;height:20px;">	   
+			    
+		    </div>
+	</div>
 
-	<input type="hidden" id="disp_session" name="disp_session" value="{{session.id}}">
-         <p style='color:red;'> {{error_msg}}</p>
-	<button type="submit" name="end-session" value="end-session" id="end-session">End session</button>
+		 <input type="hidden" id= "ht"  name="bheight">{{bheight}}<br><br>
+    		 <input type="hidden" id= "wt"  name="bwidth">{{bwidth}}
+		 <input type="hidden" id= "height_change" value='Yes'>
+		 <input type="hidden" value = "2" name="iheight_email">
+	</form> <br><br>
+	<div id="output"></div>
+	<form id="box1-form" method="post"  action="{% url 'home' %}">
+	{% csrf_token %}
+  	
+		 <input type="hidden" id= "scroll_pos"  name="scroll_pos">{{scroll_pos}}
+		 <input type="hidden" id= "scroll_change" value = 'Yes' name="scroll_change">
+		 <input type="hidden" value = "2" name="idisp_email">
+		 <input type="hidden" id= "ht_scroll"  name="bheight">{{bheight}}<br><br>
+    		 <input type="hidden" id= "wt_scroll"  name="bwidth">{{bwidth}}
+		 
+	</form>
+	</div>
+  <div class="middlepane"><h1>Question</h1>
+
+	 <h3> Please answer the following questions: </h3>
+
+		<form id="form-survey" style="width:100%;" method="post" action="{% url 'home' %}">
+        {% csrf_token %}
+
+	<fieldset >
+		<legend></legend>
+		<label>Is this e-mail thread related to this knowledge source <b>subject?</b> </label><br>
+		<input type="radio" id="knowledge_source_relation" name="knowledge_source_relation" value="yes" >Yes <br>
+		<input type="radio" id="knowledge_source_relation" name="knowledge_source_relation" value="no">No <br>
+		<input type="radio" id="knowledge_source_relation" name="knowledge_source_relation"  value="dont_know">I dont know <br>
+		<input type="hidden" id = "start_survey" name = "start_survey" >
+				
+	</fieldset>
+	<fieldset>
+		<legend></legend>
+		<label>Is this e-mail thread related to any other <b>subject(s)?</b> </label><br>
+		<input type="radio" id="subject_relation" name="subject_relation" value="yes" >Yes <br>
+		<div id="display_q2"> 
+		If yes, Please mention the subjects and separate each of them by a comma(,) <input type="text" style="max-width:500px;" name="subject_list" id="subject_list"><br>
+		</div>
+		<input type="radio" id="subject_relation" name="subject_relation" value="no">No <br>
+		<input type="radio" id="subject_relation" name="subject_relation"  value="dont_know">I dont know <br>
+	</fieldset>
+	 
+	<fieldset id="q3">
+		<legend></legend>
+		Why did you associate the provided e-mail thread to the above subjects? (e.g. Reply ID 1 use-after-free)<p>
+		
+<textarea style="max-width:800px; min-width:300px;height:70px;" id="association_reason" name= "association_reason" autofocus></textarea>
+	</fieldset>
+	
+	<fieldset>
+	<legend></legend>
+		<label> Were you uncertain about this e-mail thread being associated with any subject? <br></label>
+<input type="radio" id="uncertain" name="uncertain" value="yes" >Yes <br>
+<input type="radio" id="uncertain" name="uncertain" value="no">No <br>
+If yes, please list them here, one per line having subject and reason separated by comma <br/>For example,<br/>
+<ul><li>Fingerprinting, Because Reply 2 mentioned about OS Fingerprinting</li>
+<li>DLL Hijacking, The term was used in the e-mail title.</li>
+<li>[Subject 3], [Reason 3]</li></ul>
+<textarea style="max-width:800px;min-width:300px; height:70px;" id="uncertain_yes" name= "uncertain_yes"  autofocus></textarea>	
+	</fieldset>
+ 	<button type="submit" name="end-survey" value="end-survey" id="end-survey">Submit Responses</button>
 	</form>
 
-  
-	</div>
-  <div class="middlepane"><h1>Question</h1></div>
+  </div>
   <div class="rightpane">
-    <h1>Knowledge Source</h1></div>
+    <h1>Knowledge Source</h1>
+	<p> {{ks.source_doc}}</p>
+
+
+
+	 <h5>Data</h5>
+  <P>chocolate, strawberry, vanilla, strawberry, vanilla, vanilla, strawberry, vanilla, vanilla </P>
+  <h5>Information - this is a list of flavour of ice cream sales yesterday.</h5>
+  <P>The data now has some context and so make sense. A bit of analysis is useful to glean more information.</P>
+  <P>For example, the most popular flavour of ice cream sold yesterday is vanilla.</P>
+  <h5>Knowledge</h5>
+  <P>The shop manager can see that vanilla is the most popular ice-cream flavour. Next time he places an order, he will ask for five times as much vanilla ice-cream than chocolate ice-cream. </P>
+  <P>&nbsp;</P>
+  <h4>Example 3 </h4>
+  <h5>Data</h5>
+  <P>14-05-08, 09-10-08, 21-11-08, 09-09-08, 31-07-08 </P>
+  <h5>Information - these are a list of dates in dd/mm/yy format. They are booked dates for a holiday cottage.</h5>
+  <P>Now that the format of the data is known, it can be processed further. For example, they could be sorted into time order</P>
+  <P>The dates are sorted into order:</P>
+  <ul>
+    <li>14th May 2008</li>
+    <li>31st July 2008 </li>
+    <li>9th September 2008 </li>
+    <li>9th October 2008</li>
+    <li>21st November 2008    </li>
+
+</div>
+	
+  </ul>
+  <h5>Knowledge</h5>
+  <P>The owner of the holiday cottage can see that it has hardly been rented over the summer period. She might decide to lower her rental price in order  to get extra bookings. </P>
 </div>
 
-    <a href="/logout/">Logout</a>
-
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
 <script>
-//var count = 0;
-//var operation = 
+ $('input[type=radio][name=subject_relation]').change(function() {
+	var input1 = $('input[name=knowledge_source_relation]:checked').val();
+	var input2 = $('input[name=subject_relation]:checked').val();
+	
+	//alert(input1);
+	
+	//alert(input2);
+	if(input1 == 'dont_know' && input2 == 'dont_know')
+    		$('#q3').hide();    
+	else
+		$('#q3').show();
+
+	if(input2 == 'yes'){
+		$('#display_q2').show();
+	}
+	else{
+		$('#display_q2').hide();
+	}
+
+});
+
+$('input[type=radio][name=knowledge_source_relation]').change(function() {
+	document.getElementById("start_survey").value = getTimeStamp();
+	var input1 = $('input[name=knowledge_source_relation]:checked').val();
+	var input2 = $('input[name=subject_relation]:checked').val();
+	
+	//alert(input1);
+	
+	//alert(input2);
+
+	if(input2 == 'yes'){
+		$('#display_q2').show();
+	}
+	else{
+		$('#display_q2').hide();
+	}
+
+});
+$('input[type=radio][name=uncertain]').change(function() {
+	if (this.value == 'yes'){
+		$('#uncertain_yes').show(); 
+	}    		   
+	else
+		$('#uncertain_yes').hide();
+
+	
+});
 
 function getTimeStamp() {
        var now = new Date();
@@ -54,57 +221,234 @@ function getTimeStamp() {
 }
 
 
-
-/*$(document).ready(function(){
-
-    $("#hide-show").click(function(){
-        
-        //count++;
-	
-		$("#display").toggle(function(){
-		$(document).getElementById('disp_email').value += 2;
-
-});
-	
-	
-	//return 1-hide 0-show
-    });
-});*/
-
-//var flip = ($(document).getElementById('disp_email').value+1);
 $(document).ready(function(){
- $("#hide-show").click(function(){
-        
-        //count++;
+
+	var input1 = $('input[name="subject_relation"]:checked').val();
+	var input2 = $('input[name="knowledge_source_relation"]:checked').val();
+	//alert(input1);
+	var i = 0;
+	var z = $("#thread_count").val();
+	//alert("z="+z);
+	console.log("z="+z);
+	var countval = parseInt(document.getElementById('disp_email_1').value) + 1;
+	console.log(document.getElementById('disp_email_1').value);
+	var countval2 = parseInt(document.getElementById('disp_email_2').value) + 1;
+	var countval3 = parseInt(document.getElementById('disp_email_3').value) + 1;
+	//console.log(z);
 	
-		$("#display").toggle();
-	$.ajax({
-  	type: "POST",
-  	url: {% url 'home' %},
-  	
-  	disp_email: ($(document).getElementById('disp_email').value+1)
+		/*for(i=1;i<=z;i++){
+			alert("I-"+i);
+			 $("#hide-show_" + i).click(function(){
+       					 $("#display_"+ i).toggle();
+					 alert($(document).getElementById('disp_email_'+i).value+1);
+					 document.getElementById('disp_email_'+i).value += 1
+					 alert("i="+i);
+					 $.ajax({
+				  		
+				  		url: {% url 'home' %},  
+						data: {disp_email: countval, idisp_email : i, hide_show : 'yes', csrfmiddlewaretoken: '{{ csrf_token }}',},	
+				  		type: "POST",
+						 success: function(data) {
+        	   					 alert(data);
+	           				 },
+				   		error: function (request, status, error) {
+       							 alert(request.responseText);
+   						 } 
+
+					}); 
+	
+				//return 1-hide 0-show
+			
+			    });
+		}*/
+	
+	 $("#hide_show_1").click(function(){
+			//alert("clicked");
+       			$("#display_1").toggle();
+			
+			//var countval = parseInt($(document).getElementById('disp_email_1').value) + 1;
+			//console.log($(document).getElementById('disp_email_1').text);
+			//alert("countval="+countval);
+			$('#disp_email_1').val(countval);
+			console.log("countval="+countval.toString());
+			console.log($('#disp_email_1').val().toString());
+			//alert("disp_val = "+$('#disp_email_1').val());
+			
+			 $.ajax({
+				  
+				  url: $("#email_form").attr('action'),	
+				  data: {disp_email: countval, idisp_email : 1, hide_show : 'yes', csrfmiddlewaretoken: '{{ csrf_token }}',},
+				  type: "POST",
+				  success: function(data) {
+           					 alert(data);
+           				 },
+				   error: function (request, status, error) {
+       						 alert(request.responseText);
+   					 } 		 
+				 
+				});
+	
+				//return 1-hide 0-show
+			
+			    });
+
+
+ 	$("#hide_show_2").click(function(){
+			//alert("clicked");
+       			$("#display_2").toggle();
+			
+			//var countval = parseInt($(document).getElementById('disp_email_1').value) + 1;
+			//console.log($(document).getElementById('disp_email_1').text);
+			//alert("countval2="+countval2);
+			$('#disp_email_2').val(countval2);
+			console.log("countval2="+countval2.toString());
+			console.log($('#disp_email_2').val().toString());
+			//alert("disp_val = "+$('#disp_email_2').val());
+			
+			 $.ajax({
+				  
+				  url: $("#email_form").attr('action'),	
+				  data: {disp_email: countval2, idisp_email : 2, hide_show : 'yes', csrfmiddlewaretoken: '{{ csrf_token }}',},
+				  type: "POST",
+				  success: function(data) {
+           					 alert(data);
+           				 },
+				   error: function (request, status, error) {
+       						 alert(request.responseText);
+   					 } 		 
+				 
+				});
+	
+				//return 1-hide 0-show
+			
+			    });
+
+
+	
+	
+		$("#hide_show_3").click(function(){
+			//alert("clicked");
+       			$("#display_3").toggle();			
+			//alert("countval3="+countval3);
+			$('#disp_email_3').val(countval3);
+			console.log("countval3="+countval3.toString());
+			console.log($('#disp_email_3').val().toString());
+			//alert("disp_val = "+$('#disp_email_3').val());
+			
+			 $.ajax({
+				  
+				  url: $("#email_form").attr('action'),	
+				  data: {disp_email: countval3, idisp_email : 3, hide_show : 'yes', csrfmiddlewaretoken: '{{ csrf_token }}',},
+				  type: "POST",
+				  success: function(data) {
+           					 alert(data);
+           				 },
+				   error: function (request, status, error) {
+       						 alert(request.responseText);
+   					 } 		 
+				 
+				});
+	
+				//return 1-hide 0-show
+			
+			    });
+
+	 
 });
+
+
+
+var resizeHandle = document.getElementById('handle');
+var box = document.getElementById('box');
+
+resizeHandle.addEventListener('mousedown', initialiseResize, false);
+
+function initialiseResize(e) {
+	window.addEventListener('mousemove', startResizing, false);
+   	window.addEventListener('mouseup', stopResizing, false);
+}
+
+function startResizing(e) {
+   box.style.width = (e.clientX - box.offsetLeft) + 'px';
+   box.style.height = (e.clientY - box.offsetTop) + 'px';
+   document.getElementById('ht').value = box.style.height;
+   document.getElementById('wt').value = box.style.width;   
+}
+
+function stopResizing(e) {
+    window.removeEventListener('mousemove', startResizing, false);
+    window.removeEventListener('mouseup', stopResizing, false);
 	
-	//return 1-hide 0-show
+$("#box-form").submit(function(e) {
+	 $.ajax({ 
+        url: $("#email_form").attr('action'),
+        data: {bheight: $('#ht').val(),bwidth:$('#wt').val(), height_change: 'yes',iheight_email:3, csrfmiddlewaretoken: '{{ csrf_token }}'},
+        type: 'POST',
+        success: function(data) {
+            //alert(data);
+
+            }
     });
+//alert("in submit");
+  e.preventDefault(); // avoid to execute the actual submit of the form.
 });
 
-/*$("#hide-show").click(function(){
-        
-        //count++;
-	$(document).getElementById('disp_email').value += 1
+}
 
-	var tcount = $(document).getElementById('disp_email').value;
-	alert(tcount);
-	if(tcount%2 == 0)
-		$("#display").show();//$(document).getElementById('disp_email').value = "_show";
-		
-	else
-		$("#display").hide();//$(document).getElementById('disp_email').value = "_hide";
-	
 
-	$("#email-form").submit();
-	//return 1-hide 0-show
-    });*/
+
+ $("#box").mouseup(function(){
+ $.ajax({
+	type: 'POST',
+        url: $('#email-form').attr('action'),
+	//data: {bheight: $('#ht').val(),bwidth:$('#wt').val(), height_change: 'yes',iheight_email:3, csrfmiddlewaretoken: '{{ csrf_token }}'}, // serializes the form's elements.
+	data : $('#box-form').serialize(),
+	success: function(data){         
+		//alert(data); // show response from the php script.
+           		}
+         				
+		});
+    });
+
+
+(function( $ ) {
+	$(function() {
+		var $output = $( "#output" ),
+			scrolling = "<span id='scrolling'>Scrolling</span>",
+			stopped = "<span id='stopped'>Stopped</span>";
+			
+
+		    $( "#box" ).scroll(function() {
+		    	$output.html( scrolling );
+    			clearTimeout( $.data( this, "scrollCheck" ) );
+    			$.data( this, "scrollCheck", 
+				setTimeout(function() {
+    					$output.html( stopped );
+					document.getElementById('scroll_pos').value  = $("#box").scrollTop();	
+					document.getElementById('ht_scroll').value = box.style.height;
+					document.getElementById('wt_scroll').value = box.style.width;  			
+					 $.ajax({
+           					type: "POST",
+					        url: $("#box-form").attr('action'),
+						//data: {scroll_pos: $('#scroll_pos').val(),scroll_change: 'yes',idisp_email:3}, // serializes the form's elements.
+						data : $('#box1-form').serialize(),
+					        success: function(data)
+           					{
+					               //alert(data); // show response from the php script.
+           					}
+         					});
+				
+    				}, 250) );
+
+    		});
+
+	});
+
+})( jQuery );
+
+
+ 
+
+
 </script>
 {% endblock %}

@@ -14,16 +14,19 @@ class Registration(models.Model):
     def __str__(self):
         return self.title
 
-
+class EmailBody(models.Model):
+	body_text = models.TextField()
+'''
 class EmailThread(models.Model):
-        
-	text_doc = models.TextField()
+        title = models.TextField()
+	parent_email = models.ForeignKey(EmailBody, related_name = 'current_email')
+	child_email = models.ForeignKey(EmailBody, related_name = 'child_email',default = None, null=True, blank=True)
+'''
+class EmailThread(models.Model):
+	text_do = models.TextField()
 
-class KnowledgeSource(models.Model):
-        
+class KnowledgeSource(models.Model):        
 	source_doc = models.TextField()
-
-
 
 class Session_log(models.Model):
 	user = models.ForeignKey(User)
@@ -36,17 +39,24 @@ class Session_log(models.Model):
 	)
 	session_action = models.CharField(choices = ACTION_CHOICES, default = START_ACTION ,max_length=255)
 
+class Survey_response(models.Model):      
+	q1 = models.TextField(null=True, default=None,blank=True)
+	q2 = models.TextField(null=True, default=None,blank=True)
+	q2_extended = models.TextField(null=True, default=None,blank=True)
+	q3 = models.TextField(null=True, default=None,blank=True)
+	q4 = models.TextField(null=True, default=None,blank=True)
+	q4_extended = models.TextField(null=True, default=None,blank=True)
 
-class Questions(models.Model):
-	#edit to allow null , yes , no
-        answer =  models.CharField(max_length=35, null=True, default=None,blank=True)
+class Survey(models.Model):
 	session = models.ForeignKey(Session_log)
+	survey_response = models.ForeignKey(Survey_response)
+	timestamp_survey_start = models.TextField(null=True, default=None,blank=True)
+	timestamp_survey_end = models.DateTimeField(default=timezone.now)
 
 class UserConsent(models.Model):
 	user = models.ForeignKey(User)
 	session = models.ForeignKey(Session_log)
-	email_thread = models.ForeignKey(EmailThread)
-	question = models.ForeignKey(Questions)
+	email_thread = models.ForeignKey(EmailThread)	
 	knowledge_source = models.ForeignKey(KnowledgeSource)
 
 
@@ -61,9 +71,22 @@ class Click_log(models.Model):
 		(HIDE_ACTION,'_hide'),
 	)
 	click_action = models.CharField(choices = ACTION_CHOICES, default = SHOW_ACTION ,max_length=255)
+	
 
+class Box_log(models.Model):
+	user = models.ForeignKey(User)
+	session = models.ForeignKey(Session_log)
+	timestamp_resize = models.DateTimeField(default=timezone.now)
+	width = models.CharField(max_length=35, null=True, default=None,blank=True)
+	height = models.CharField(max_length=35, null=True, default=None,blank=True)
+	
 
-
+class Box_scroll_log(models.Model):
+	user = models.ForeignKey(User)
+	session = models.ForeignKey(Session_log)
+	timestamp_resize = models.DateTimeField(default=timezone.now)
+	scrollbar_pos = models.CharField(max_length=35, null=False, default=None,blank=True)
+	
 
 
         
