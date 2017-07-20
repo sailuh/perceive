@@ -1,0 +1,188 @@
+﻿The Hadoop Ecosystem
+By: Katherine Kanoelani Dudoit
+
+
+I. Introduction
+In the era of big data, there is a strong need to store and process data at a low cost. Hadoop provides a cost-effective distributed file system and a framework for the analysis transformation of very large data sets. Efficient learning from this data requires complex architecture that utilize a combination of tools and projects for collection, storage, processing, analytics and more. The Hadoop ecosystem has evolved into a vast web of tools related to every aspect of big data. However, the way these tools are put together and their purpose is still a challenging concept to fully understand.
+
+
+Section 1 will first describe Hadoop and its components. Section 2 will provide an understanding on the Hadoop Ecosystem followed by a brief discussion on some of the tools within the Hadoop Ecosystem in Section 3. Sections 4 and 5 will discuss the concept, requirements and limitations of a data lake followed by an overview of CLAMS and Constance, two examples of state-of-the art systems being built on top Hadoop ecosystems and data lake.
+
+
+This paper will first describe Hadoop and its components. Section 2 will provide a background on Hadoop and Section 3 will extend our understanding of the Hadoop Ecosystem. Section 4 will give a  brief discussion on some of the tools within the Hadoop Ecosystem by adding more software systems which communicate with Hadoop, resulting in. the Hadoop Ecosystem. The final sections will discuss the concept, requirements and limitations of a data lake, a conceptual framework that can use a Hadoop  Ecosystem or an entirely different ecosystem. We conclude with an overview of CLAMS and Constance, two examples of state-of-the art systems being built on top Hadoop ecosystems and data lake to address existing limitations.
+ 
+II. Hadoop
+Hadoop is a software framework that stores and processes large amounts of data at a quickly and cost effectively through clusters of commodity hardware.  Hadoop’s architecture offers “schema-on-read” (a feature needed in data lakes), multi-use multi-workload data processing, lower cost of storage, and data warehouse workload optimization (Panahaziaar 1). The two main components of Hadoop include the storage Hadoop Distributed File System (HDFS) and MapReduce (see fig. 1). The HDFS is the storage framework that stores large amounts of data across multiple nodes of commodity. HDFS has built-in fault tolerance in addition to controls in case of namenode failure.  MapReduce is the computation framework or data processing 
+
+
+  
+
+	Fig. 1 Hadoop Components
+	
+
+engine that uses this storage to perform terabyte sized files computations. Within MapReduce, the map phase takes raw data and organizes it into key value pairs, while the reduce phase can process data in parallel (Landset 2015, 5). There has been a current trend towards further developing analytics and visualization technologies on top of the Hadoop platform to enable better standardization of reporting and summarization results (O’Driscoll 2013, 5). Due to this trend, a multitude of projects have been deployed to either complement or replace original elements in Hadoop, creating the Hadoop ecosystem.
+
+
+A. Hadoop 1.0 and Hadoop 2.0: YARN
+  
+
+	Fig. 2 Hadoop 1.0 vs Hadoop 2.0 with YARN. The blocks sitting on top of MapReduce and YARN will be explained in Section III. Hadoop Ecosystem.
+	
+
+In 2006, Yahoo! Adopted Apache Hadoop to replace the infrastructure driving its WebMap application, however Hadoop has two shortcomings. First, tight coupling of a specific programming model with resource management infrastructure forced developers to abuse the MapReduce programing model. Prior to YARN, MapReduce was responsible for cluster resource management and data processing (Landset 2015, 5). Second, Hadoop’s centralized handling of jobs’ control flow, resulted in endless scalability concerns for the scheduler (Vavilapalli 2013, 1). The resource manager performs 2 jobs in the resource management and also keeps track of the application status which creates a scalability problem.
+ 
+Yahoo! created YARN as a solution to these shortcomings. YARN is a new architecture that takes over resource management duties, allowing separation between the infrastructure and programming models (Landset 2015, 5). In addition, YARN delegates scheduling functions to per-application components (Vavilapalli 2013, 1). This solution improved many deficiencies present in the old MapReduce model. YARN lifts some functions into a platform layer that is responsible for resource management, leaving coordination of logical execution plans to host a framework of implementations (Vavilapalli 2013, 4). YARN can run on large clusters, which more than doubles the amount of jobs and tasks it can handle before running into bottlenecks (Landset 2015, 5). The decoupling of resource management and programming framework of YARN provides greater scalability, higher efficiency and enables many different frameworks to efficiently share a cluster (Vavilapalli 2013, 14).
+
+
+The various hadoop ecosystem software which communicates with Hadoop, explained in the following section, may either communicate with MapReduce directly or with YARN. 
+ 
+III. The Hadoop Ecosystem
+The Hadoop Ecosystem consists of several commercial and open source products, as shown on Fig 3.
+  
+
+	Fig. 3 A flavor of Hadoop Ecosystem
+	Hadoop has evolved into an immense web of projects related to every aspect of big data workflow, such as data collection, storage, processing, and more and the Hadoop ecosystem encompasses these related projects. Hadoop Ecosystems can be understood as “bundles” that extend Hadoop capabilities, and the extra software that comes in such bundles can vary per vendor. For instance, Fig 4, 5 and 6 shows the different Hadoop Ecosystems from Google, Yahoo, and Cloudera respectively. 
+
+
+  
+
+	Fig. 4 Google’s Hadoop Ecosystem
+	
+
+
+
+
+
+  
+
+	Fig. 5 Yahoo Hadoop Ecosystem
+	
+
+
+
+
+
+  
+
+	Fig. 5 Cloudera Hadoop Ecosystem
+	
+
+
+
+As can be observed, Google and Yahoo include different “software blocks”. Several of Apache projects, which are open source, were originally created after research work of their proprietary version was released (including Hadoop itself, from Google’s research article on MapReduce), or became open source themselves (e.g. Apache Nifi, which was donated from NSA). Despite coming in bundles, it is still difficult to understand the purpose of these blocks and how they are put together (if not all software in the bundle is necessary), especially when deciding on what trade-offs will benefit the most or how each of them map to current project requirements. In fact, several companies such as Cloudera and Hortonworks built entire service business to address this difficulty. The next section will summarize some of the tools implemented in the Hadoop Ecosystem to serve as a starting point for the reader to assess how to decide on each block is useful for their need.
+ 
+IV. Tools in the Hadoop Ecosystem
+
+
+This section will present some of the tools used together with Hadoop, extending it into an Ecosystem. This section is by no means exhaustive, but serves to illustrate how functionality can be added in Hadoop, and should be therefore read per software as needed, instead of entirely as other sections in this article. Sub-sections define groups of tools for a specific need, such as large data processing or machine learning, which are among the most popular in Hadoop Ecosystems. 
+ 
+A. Tools Created from a MapReduce Nightmare
+The Map-reduce programming model in Hadoop is very low level and requires developers to write custom programs which are difficult to maintain and use. MapReduce is designed by default to treat each line as an individual record. As many standard sequence formats involve multiple lines per sequence, it is necessary to manipulate the data into one line format or to program custom Hadoop input formats and record features (O’Driscoll 5). MapReduce is not designed for jobs that are latency sensitive. On a large cluster, it can take tens of seconds for large jobs to start up, regardless of the amount of data being processed.
+1. Pig
+Pig is one of the big data tools that produce a sequence of MapReduce programs to complex tasks comprised of multiple interrelated transformations (Panahiazar 2014, 3). Pig is more oriented to programming provides concise data types for expressing common operations such as projection, selection, group, and join and this conciseness is cost effective. Pig scripts approach the performance programs directly written in Hadoop Java (Mishne 2013, 4).
+ 
+2. Hive
+Hive is an open-source data warehousing solution built on top of Hadoop, and developed at Facebook for ad hoc querying. Hive supports queries in languages like SQL and these are combined into map-reduce jobs that are executed using Hadoop. For example, at Facebook, the Hive warehouse contains 10,000 tables and stores over 700 terabytes of data while being used for both reporting and ad-hoc analyses by more than 200 users per month (Thusoo 2010, 1). Hive queries can launch MapReduce job however, do not offer real-time queries (Taylor 2010, 1).
+ 
+3. RHIPE
+Those who use R and are interested in the "R and Hadoop Integrated Processing Environment”, can use RHIPE, a java package that integrates the R environment with Hadoop and makes it possible to code MapReduce algorithms in R (Taylor 2010, 3).
+ 
+B.  Large Data Processing Software
+1. Spark
+Apache Spark is a general-purpose engine for large scale data processing. It provides an alternative to MapReduce which process large data in “batch mode” (i.e. large chunks of data are processed at a time, contrary to data streams which process one at a time). Apache Spark provides in-memory batch mode, and also a semi-stream data processing mode, turning viable processing large sized and high throughput data. SparkR is an R package that provides a frontend to Apache Spark and uses Spark’s distributed computation engine to enable large scale data analysis from the R shell (Venkataraman). Many academic and commercial projects have looked at integrating R with Apache Hadoop, and although SparkR follows a similar approach, using Spark as the execution engine results in greater functionality and performance benefits (Venkataraman).
+2. Storm
+Storm is a real-time and fault-tolerant distributed stream data processing engine made available by Twitter that powers real-time stream management tasks. It takes to the extreme the semi-stream mode of Apache Spark, sometimes preferred over for applications that are pure real-time. Storm runs on a distributed cluster and often on another abstraction such as Mesos. Storm topologies are used by several groups inside Twitter for revenue, user services, search, and content discoveries. These topologies are used for filtering, aggregating content of various streams at Twitter, clustering or running simple machine learning algorithms, and stream data (Toshniwal).
+ 
+
+
+ 
+C.  Large Data Machine Learning
+
+
+3. Manhout
+Mahout is an Apache project for building scalable machine learning libraries with most algorithms built on top of Hadoop. Current focus areas of Mahout include clustering, classification, data mining, and evolutionary programming.
+
+
+D. Other Hadoop Ecosystem Tools
+
+
+4. Cascading
+Cascading is a project providing a programming API for defining and executing fault tolerant data processing workflows on a Hadoop Cluster. A thin open source Java library sits on top of the Hadoop Layer. This provides a query processing API that allows programmers to operate at a higher level than MapReduce and to more quickly assemble complex distributed processes and schedule based on dependencies. HBase adds a distributed, fault-tolerant scalable database built on top of the HDFS file system and provides random, real-time read/access to data. HBase uses Zookeeper for management of partial failures
+ 
+5. Espresso
+Espresso is a distributed document-oriented database that emerged out of a need to build a primary source-of-truth data store for LinkedIn. The applications depend on offline data analysis in Hadoop. Espresso’s seamless integration with the end-to-end data flow cycle is an important part of its place in the data ecosystem. For this reason, Espresso supports efficient ingestion of large amounts of data from offline environments like Hadoop into espresso. Hadoop jobs emit to a specialized output format that writes out the primary data along with index updates, and applies the portioning function to write out files that align with the online partitions (Qiao).
+
+
+D.1. Real-time Data Processing Tools used with Hadoop at Facebook
+Real-time data processing systems are used to provide insights about events as soon as they are happening and many companies have developed their own systems. At Facebook, real-time data processing powers many use cases such as the real-time reporting of aggregated, anonymized voice of Facebook users, analytics for mobile applications, and insights for Facebook page administrators (Chen 2016 1). The real-time stream processing systems Puma, Stylus and Swift read data and write data from and to Scribe. A directed acyclic graph can connect Puma, Stylus and Swift through scribe as needed. Facebook also implements Laser, Scuba and Hive as data stores that use Scribe for ingestion and to serve different types of queries.
+ 
+D.1.1. Scribe
+Scribe is a persistent distributed messaging system for collecting, aggregating and delivering high volumes of log data, with a few seconds of latency and high throughput. This provides a transport mechanism for sending data to both batch and real-time systems at Facebook. Messages are stored and streams can be replayed by the same receivers or different receivers for up to a few days. By storing data in the Hadoop Distributed File System, Scribe provides data durability (Chen 2016, 2).
+ 
+D.1.2. Puma
+Puma is a stream processing system whose applications are written in a SQL type of language with user defined functions written in Java. The first purpose Puma serves, is to provide pre-computed query results for simple aggregation queries. Second, Puma provides filtering and processing of Scribe streams with only a few seconds of delay. At Facebook, this can reduce a stream of all actions to only posts, or to posts that match a predicate such as #superbowl (Chen 2016 3). The output of these stateless Puma apps is another scribe stream which can then be the input to another Puma app or any other real-time stream processor or data store. Puma is optimized for compiled queries, not ad-hoc analysis and engineers deploy apps with the expectation that they will run for months or years. This allows Puma to generate an efficient query computation and storage plan.
+ 
+D.1.3. Swift
+Swift is a basic stream processing engine which provides checkpointing functionalities for Scribe. The API (application program interface) for Scribe is very simple and if the app crashes, it can restart from the latest checkpoint. Thus, all data is read at least once from Scribe. Swift communicated with client apps through system-level pipers so the level of performance and fault tolerance of the system are up to the client. Swift is written in scripting languages like Python, and is mostly used for low throughput, stateless processing (Chen 2016, 3).
+ 
+D.1.4. Stylus
+Stylus is a low-level stream processing framework written in C++. The basic component of Stylus is a stream processor. Input to the processor is a Scribe stream and output can be another scribe stream or a data store for serving the data. Stylus can be stateless or stateful and requires the application writer to identify the event time data in the stream (Chen 2016, 3).
+ 
+D.1.5. Laser
+Laser is a high query throughput, low-latency key-value storage service built on top of RocksDB and can read from any scribe category in real-time or any hive table once a day. At Facebook, Laser has two common use cases. First, Laser can make the output Scribe stream of a Puma or Stylus app available to Facebook products. Second, Laser can also make the result for a complex Hive query or a Scribe stream available to a Puma or Stylus app usually for a lookup join or hashtag (Chen 2016, 3).
+ 
+D.1.6. Scuba
+Scuba is a fast analysis data store commonly used to troubleshoot problems as they occur. At Facebook, Scuba ingests millions of new rows per second into thousands of tables, and data typically flows from products through Scribe and into Scuba with less than one minute of delay. Scuba can also ingest the output of any Puma, Stylus or Swift app. Finally, Scuba provides ad hoc queries with most response times under 1 second and the UI displays query results in a variety of visualization formats including tables, time series, bar charts and world maps (Chen 2016, 3).
+ 
+The following sections will describe the concept of a data lake and data lake requirements (Section IV), data lake limitations (Section V), which can be built using Hadoop Ecosystems, or other software not related to hadoop. The last section highlight two state of the art systems being built on top of the Hadoop ecosystems and data lakes (Section VI).
+ 
+IV. Data Lake Concept & Requirements
+The term “data lake” has been coined to convey the concept of a centralized repository containing virtually inexhaustible amounts of raw or minimally curated data that is readily available anytime, to anyone authorized to perform analytical activities (Terrizzano 2015, 1).
+
+
+In comparison to data warehouse systems with a relational view of data, Data Lakes need to handle more heterogeneous data sources including semi-structured and unstructured sources (Hai 2016, 2). Data Lake systems need to provide a flexible storage system which can handle these different data models efficiently in an integrated way. 
+
+
+Hadoop Ecosystems serve as one way to instantiate Data Lakes, as it provides schema-on-read capabilities, essential in order to conceptualize a Data Lakes. Specifically, contrary to SQL or No-SQL Databases that requires some re-formatting of the data into tables before being able to store the data (“schema-on-write”), the Hadoop HDFS system storage usage (not its implementation) is similar to a computer’s file system: Files are loaded as-is into the file system, just as files are moved from a pendrive into a computer’s Desktop or loaded in a remote server. This captures the essence of “schema-on-read” required by Data Lakes, as such files will only need to be formatted when used for analysis.  The lack of proper formatting during data acquisition, however, also has its limitations. 
+ 
+V. Data Lake Limitations
+Data Lake systems are often very application-specific solutions that have been crafted for the specific requirements of an organization based on generic software frameworks such as Hadoop (Hai 2016, 1). These frameworks require a lot of power for adaptation and customization and only provide part of the functionality required for data lakes (Hai 2016, 2). For example, Hadoop provides metadata management functions however, does not provide all the metadata functionalities required for a Data Lake (Hai 2016, 1). In addition, the batch-oriented nature of Hadoop is limiting to derived data applications (Sumbaly 2013, 10).
+ 
+Additionally, the increasing use of a “schema-on-read” approach paradigm has presented data management challenges as the use of unstructured and semi-structured data in large volumes makes current data cleaning tools difficult to adopt (Farid 2016 1).
+ 
+Current data quality techniques rely on the existence and use of global schema to define various integrity constraints. However, in “schema-on-read” environments, most data are available in local schemas, schema-less RDF triple formats, and comma-separated value files, and analytics are performed on top of application-specific schemas that are defined later in the stack. This leads to the propagation of large volumes of inaccurate data through multiple data processing layers through complex ETL (extract-transform-load) operations which makes it difficult to repair and track errors to their original sources. 
+
+
+The lack of schema information and limited number of integrity constraints that can be defined without a schema has complicated the ability to clean data in the lake directly after ingesting it. In addition, Denial Constraints (state-of-the-art method to express data quality rules over relational data) cannot be directly applied on data lakes due to their schema-less nature of lake data and the limited scalability of the algorithms to large datasets (Faird 2016, 1).
+ 
+VI. State of the Art Systems Being Built on Top Hadoop Ecosystems and Data Lakes
+Current proposals for Data Lake Systems lack details about required metadata management features and methods for efficient integrated query processing. Constance is the first step towards a practical data lake solution that can be used as the basis in several data lake projects because it provides flexible and extensible framework for data management problems.
+ 
+To avoid the serious data management problems associated with the “schema-on-read” paradigm, CLAMS discovers and enforces expressive integrity constraints from large amounts of lake data with limited schema information. The following sections will describe each state-of-the-art system in detail.
+ 
+A. CLAMS
+To meet data management, quality and cleaning requirements, CLAMS serves as an interactive system that enables business users to design and enforce and design complex constraints over large unstructured and semi-structured datasets (Farid 2016, 1). CLAMS operates on large-scale processing frameworks to manipulate massive datasets. The backend algorithms for constraint discovery and enforcement are designed and implemented on the Apache Spark cluster computing framework to benefit from its efficient in-memory processing capabilities (Farid 2016, 3). Spark reads RDF from HDFS, the data lake. CLAMS provides a data ingestion module to transform unstructured and semi-structured data into relational data triples, then loads this into the Hadoop Distributed File System. In addition, CLAMS specifies expressive integrity constraints over graph data through: automatic discovery and ranking of plausible quality constraints which get verified by the user, and friendly and interactive UI for creating and modifying constraints guided by data sampling and summarization. Other features of CLAMS include specified constraints through scalable, distributed algorithms to detect data inconsistencies and a ranked list of possible errors along with the lineage of violating data for user inspection. Overall, CLAMs improves the ability to extract value from dark, limited access data (Farid 2016, 1).
+ 
+B. Constance
+Metadata management is crucial for data reasoning, query processing and data quality management. Without metadata, data lakes are hardly usable as the structure and the semantics of the data are unknown. Constance is a data lake system with sophisticated metadata management over raw data extracted from heterogeneous data sources (Hai 2016, 1). By providing flexible, extensible framework for data management problems, Constance is the first step towards a practical data lake solution which can be used as the basis in several data lake projects. Constance provides a metadata management system which extracts explicit and implicit metadata from imported data. Constance is composed of semantic annotations, advanced modeling and record linkage which contributes to the semantic metadata and enrichment which improves the overall quality of data stores in the Data Lake. In addition, Constance supports a formal structured query language as well as simple keyword queries which are translated into a formal query by using a query formulation function. Finally, Constance provides an integrated user interface which allows users to check the visualized impact of every schema management step to query the data and monitor the quality of the Data Lake by use-defined quality metrics (Hai 2016, 2). Overall, Constance is a data lake system which manages structural and semantic metadata, provides means to enrich metadata with schema matching and schema summarization techniques, and offers a unified interface for query processing. This Data Lake system focuses more on data ingestion, metadata management, and query answering, but also provides basic security and provenance mechanisms (Hai 2016, 4).
+ 
+Conclusion
+Hadoop is a software framework that stores and processes large amounts of data quickly and cost effectively. The two main components of Hadoop include the HDFS for storage framework and MapReduce for computation framework. The Hadoop ecosystem consists encompasses a vast number of projects that work together to improve functionality and different aspects of big data workflow. To fully understand the Hadoop ecosystem, it is necessary to look at each individual project itself,the ecosystem that surrounds it, and the organization needs.
+
+
+References
+Ankit Toshniwal, Siddarth Taneja, Amit Shukla, Karthik Ramasamy, Jignesh M. Patel, Sanjeev Kulkarni, Jason Jackson, Krishna Gade, Maosong Fu, Jake Donham, Nikunj Bhagat, Sailesh Mittal, and Dmitriy Ryaboy. 2014. Storm@twitter. In Proceedings of the 2014 ACM SIGMOD International Conference on Management of Data (SIGMOD '14). ACM, New York, NY, USA, 147-156.
+ 
+Dhruba Borthakur. 2013. Petabyte scale databases and storage systems at Facebook. In Proceedings of the 2013 ACM SIGMOD International Conference on Management of Data (SIGMOD '13). ACM, New York, NY, USA, 1267-1268.
+ 
+Guoqiang Jerry Chen, Janet L. Wiener, Shridhar Iyer, Anshul Jaiswal, Ran Lei, Nikhil Simha, Wei Wang, Kevin Wilfong, Tim Williamson, and Serhat Yilmaz. 2016. Realtime Data Processing at Facebook. In Proceedings of the 2016 International Conference on Management of Data (SIGMOD '16). ACM, New York, NY, USA, 1087-1098.
+ 
+Lin Qiao, Kapil Surlaker, Shirshanka Das, Tom Quiggle, Bob Schulman, Bhaskar Ghosh, Antony Curtis, Oliver Seeliger, Zhen Zhang, Aditya Auradar, Chris Beaver, Gregory Brandt, Mihir Gandhi, Kishore Gopalakrishna, Wai Ip, Swaroop Jgadish, Shi Lu, Alexander Pachev, Aditya Ramesh, Abraham Sebastian, Rupa Shanbhag, Subbu Subramaniam, Yun Sun, Sajid Topiwala, Cuong Tran, Jemiah Westerman, and David Zhang. 2013. On brewing fresh espresso: LinkedIn's distributed data serving platform. In Proceedings of the 2013 ACM SIGMOD International Conference on Management of Data (SIGMOD '13).
+ 
+Rihan Hai, Sandra Geisler, and Christoph Quix. 2016. Constance: An Intelligent Data Lake System. In Proceedings of the 2016 International Conference on Management of Data (SIGMOD '16). ACM, New York, NY, USA, 2097-2100. DOI: https://doi.org/10.1145/2882903.2899389
+ 
+Panahiazar, Maryam. "An Overview of the Hadoop/MapReduce/HBase Framework and Its Current Applications in Bioinformatics." BMC Bioinformatics. BioMed Central, 21 Dec. 2010. Web. 21 Feb. 2017.
+ 
+Semih Salihoglu, Jaeho Shin, Vikesh Khanna, Ba Quan Truong, and Jennifer Widom. 2015. Graft: A Debugging Tool For Apache Giraph. In Proceedings of the 2015 ACM SIGMOD International Conference on Management of Data (SIGMOD '15). ACM, New York, NY, USA, 1403-1408.
+ 
+Shivaram Venkataraman, Zongheng Yang, Davies Liu, Eric Liang, Hossein Falaki, Xiangrui Meng, Reynold Xin, Ali Ghodsi, Michael Franklin, Ion Stoica, and Matei Zaharia. 2016. SparkR: Scaling R Programs with Spark. In Proceedings of the 2016 International Conference on Management of Data (SIGMOD '16). ACM, New York, NY, USA, 1099-1104.
