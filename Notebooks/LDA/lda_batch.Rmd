@@ -1,0 +1,144 @@
+---
+title: "LDA Model Batch"
+author: "Carlos Paradis"
+date: "July 4, 2017"
+output:
+  html_document:
+    css: ~/OneDrive/Academia/Projects/inkCSS/res/css/style.css
+    highlight: zenburn
+    toc: yes
+    toc_depth: 5
+  word_document: default
+---
+
+# Introduction 
+
+The purpose of this notebook is to show the code necessary to execute multiple LDA runs, and construct a topic flow across different topic-term matrix over monthly bins through cosine similarity. 
+
+The data used consist of either Seclist's Full Disclosure or BugTraq mailing list, as output by the crawler module, and as such contains for every e-mail reply body a single file. Alternatively, the corpus may use the Aggregation module / data to merge the files into thread files. There is no assumption on the individual file content, other than it reflect the content of the e-mail reply (future work will consider removing e-mail signatures and performing other non-token oriented pre-processing).
+
+```{r Create LDA Model}
+source("../New LDA Models/lda_functions.R")
+
+fd.path <- "../Data/Full_Disclosure/2008/Body/"
+bt.path <- "/Users/carlos/Downloads/2012"
+```
+
+# LDA 
+
+The VEM model is used, as implemented by Blei et al. Other models will be tested in a later stage. Model tunning is **not** performed in this notebook to showcase other ways to explore the data. Pre-processing parameters were discussed in an earlier stage of the research, but not exposed as parameters in model creation at this point, again, to simplify discussion and give room to the other functions available. As such, the choice of parameters here are simply k=10 for all months. 
+
+```{r}
+models <- list()
+models[["Jan"]] <- rawToLDA(bt.path,10,"Jan")
+models[["Feb"]] <- rawToLDA(bt.path,10,"Feb")
+models[["Mar"]] <- rawToLDA(bt.path,10,"Mar")
+models[["Apr"]] <- rawToLDA(bt.path,10,"Apr")
+models[["May"]] <- rawToLDA(bt.path,10,"May")
+models[["Jun"]] <- rawToLDA(bt.path,10,"Jun")
+models[["Jul"]] <- rawToLDA(bt.path,10,"Jul")
+models[["Aug"]] <- rawToLDA(bt.path,10,"Aug")
+models[["Sep"]] <- rawToLDA(bt.path,10,"Sep")
+models[["Oct"]] <- rawToLDA(bt.path,10,"Oct")
+models[["Nov"]] <- rawToLDA(bt.path,10,"Nov")
+models[["Dec"]] <- rawToLDA(bt.path,10,"Dec")
+```
+
+`models` is a named list after each month used to create a separate LDA model covering a single year. 
+
+Each element of the list of models is a named list in itself containing the 3 most relevant data objects associated to the creation of the LDA Model:
+
+ * `tokens`: Contains a matrix of tokens, which is used to create the document-term frequency matrix (dfm).
+ * `dfm`: Contains the document-term frequency matrix, which is used as input to create the LDA model. 
+ * `LDA`: Contains a class (as defined in package `topicmodels`) containing several parameters required to be defined a-priori for the model (e.g. the number of topics `k`), as well as the expected outputs of an LDA model: A `topic-term-matrix`, and a `document-topic-matrix`.
+
+# Topic Exploration
+
+There are varying ways to explore topics. Out of the surveyed methods available, Termite and LDAVis packages offered the best alternatives. We use LDAVis here to explore the topics **within a month**.  
+
+## Topic-Term Matrix
+
+```{r}
+# To inspect a given topic use one of the following:
+plotLDAVis(models[["May"]],as.gist=FALSE)
+```
+
+The visualization provides more information derived from the `topic-term-matrix` output by LDA. 
+
+Additionally, we may also be interested in seeing how any one term is used across the corpus used for the specified month. For example, if the term `rpath` is of interest, we can inspect the documents, some of the content ocurring immediately before and after in it's original context, as so:
+
+```{r}
+View(kwic(models[["May"]][["tokens"]],"rpath")) #see context for token u since it is one of the words chosen to represent the topic
+```
+
+## Document-Topic Matrix
+
+While LDAVis provides means to sort the topic terms beyond a maximum likelehood approach to understand which terms distinguish one topic of another through a sliding bar, and their ocurrence in respect to other topics (red and blue bars upon selection), it unfortunately falls short in providing visualization support to the raw content linkage available in the document-topic matrix. 
+
+By using a maximum likelehood approach to transform the soft mapping matrix into a deterministic mapping, we can use it to guide exploration of the documents associated to the topic (in the future, a `nearest-likelehood-threshold` mechanism will be implemented to avoid documents with similar likelehood topics). For example, by observing the number of documents per topic:
+
+```{r}
+GetDocumentsPerTopicCount(models[["May"]][["LDA"]])
+```
+
+Or the name of the documents mapped to a specific topic to explore their content:
+
+```{r}
+GetDocumentsAssignedToTopicK(models[["May"]][["LDA"]],5)
+  # Call quanteda library to mask View function if it doesn't show the table below on a browser
+```
+
+# Topic Flow 
+
+The Topic Exploration functions are useful to look **within** a given month topics. However, up to this point no exploration or discussion is done concerning what happens between topics of **different months**. Specifically, we are interested in observing how topics change over time, i.e., the topic flow (future work will consider non-temporal relationships): 
+
+```{r}
+topic.flow <- CalculateTopicFlow(models)
+View(topic.flow)
+```
+
+The table displays 2 sub-tables: To the left, Dec-Jan columns describes the topics of highest similarity of every month. The right-side sub-table provide the similarity between the pair of topics. For example, if Jan and Feb columns contain 2 and 3 in a given row to the left sub-table, then in the same row to the right sub-table in the column Jan_Feb will contain the similarity between the topics between months.
+
+It is important to note the presented table contain a few assumptions in it's construction, in order to facilitate the visualization of the Topic Flow in a given year. 
+
+Let's first motivate the assumptions: In this notebook, every month was defined as 10 topics. For every pair of months we wish to compare their similarity against one another, a total of 100 rows is created with the associated similarity. Since we are considering 12 months in every topic flow table (as shown above), we would have a total of 10^12 rows, clearly making it very hard for manual inspection. 
+
+Instead, we resort again to a maximum likelehood approach: First, the January 10 topics is considered to be compared with the 10 topics of Febraury. Rather than showing 100 topics, we choose only those with the maximum likelehood similarity from Feb, as such, keeping the number of rows to 10, rather than 100 (note a shortcoming here occurs when other topics from Feb have similar similarity to the highest similarity topic, as discussed before). 
+
+Now using the chosen topics of Feb (which may be repeated, as topics from Jan may have as maximum likelehood the same topic in Feb), these topics are compared against March 10 topics, and again the maximum likelehood is applied, so that 10 topics or less are selected. 
+
+The same assumption is repeated until December.
+
+The table used is a different approach than that used by Topic Flow visualization, also used by the project this notebook is part of.
+
+# Topic Flow for Leximancer
+
+Leximancer is an (paid) alternative to LDA, and contains already as part of it's suite a visualization that replaces LDAVis. The code below provides a transformation for it's equivalent to topic-term matrix in order to construct topic flows in the same way as done as LDA. This section, although functional, is still undergoing work as the tool as only recently acquired by the group. 
+
+```{r}
+l.ttm1 <- fread("~/Desktop/ttm_leximancer_2009.csv")
+l.ttm1.names <- l.ttm1$concept
+l.ttm1 <- l.ttm1[,2:ncol(l.ttm1),with=FALSE]
+l.ttm1 <- as.matrix(l.ttm1)
+
+l.ttm2 <- fread("~/Desktop/ttm_leximancer_2010.csv")
+l.ttm2.names <- l.ttm2$concept
+l.ttm2 <- l.ttm2[,2:ncol(l.ttm2),with=FALSE]
+l.ttm2 <- as.matrix(l.ttm2)
+similarity <- CalculateHighestTopicCosineSimilarity(l.ttm1,l.ttm2)
+write.csv(similarity,"~/Desktop/leximancer_FD_similarity_2009_2010.csv",row.names=FALSE)
+
+# Beware this is a over simplification of the topic, using the highest likelehood word rather than all it's terms:
+similarity$ttm1 <- l.ttm1.names[similarity$ttm1]
+similarity$ttm2 <- l.ttm2.names[similarity$ttm2]
+write.csv(similarity,"~/Desktop/leximancer_FD_similarity_highest_likelehood_term_representation_2009_2010.csv",row.names=FALSE)
+```
+
+# Other Visualizations
+
+Another option for visualizing the data is using word clouds, although the method doesn't provide much insight into the data when compared to the others presented in this notebook. It is only stated here for documentation purposes. 
+
+```{r Plots, eval=FALSE}
+textplot_wordcloud(tfidf(dfm2), min.freq = 2000, random.order = FALSE,rot.per = 0,colors = RColorBrewer::brewer.pal(8,"Dark2"))
+```
+
