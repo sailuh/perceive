@@ -5,6 +5,7 @@ s(require(ggthemes))
 s(require(readtext))
 s(require(quanteda))
 s(require(topicmodels))
+s(require(LDAvis))
 
 ##################### TF-IDF Filtering Functions ############ #############
 
