@@ -1,1 +1,0 @@
-According to what I jhust read here: http://docs.freebsd.org/cgi/getmsg.cgi?fetch=394609 0 current/freebsd-security  You may wish to scrub everything down.  Len

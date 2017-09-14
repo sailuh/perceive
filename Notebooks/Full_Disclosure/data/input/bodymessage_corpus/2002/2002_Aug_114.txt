@@ -1,1 +1,0 @@
-WorkAround/Real Fix: Or better yet lock the screen while you are away.  This is like leaving logined in as root on an UNIX box and  letting other people have physical access to the machine.   Thanks, Andrew Pinski
