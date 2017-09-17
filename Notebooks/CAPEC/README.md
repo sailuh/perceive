@@ -8,6 +8,7 @@ There are current 3 main fronts in this area of the project:
 
 1. Understanding the overall structure of CAPEC and it's various fields. (See [CAPEC Introduction Notebook](https://github.com/sailuh/perceive/tree/master/Notebooks/CAPEC/Introduction)). 
 2. Visualizing previous year fields (See [CAPEC Visualization Notebook](https://github.com/sailuh/perceive/tree/master/Notebooks/CAPEC/Visualization)).
+3. Visualizing how CAPEC structure changes over time. 
 
 ## CAPEC Fields
 
@@ -35,4 +36,8 @@ The script is also able to export the json data output which is used by foamtree
 
 ### Known limitations
 
-Due to older versions of CAPEC using a different XML structure, `capec_foamtree_view.py` may be unable to extract the necessary content to generate the visualization. 
+Due to older versions of CAPEC using a different XML structure, `capec_foamtree_view.py` may be unable to extract the necessary content to generate the visualization.
+
+## CAPEC Evolution
+
+Undergoing work. See the [Difference Report](https://github.com/sailuh/perceive/tree/master/Notebooks/CAPEC/Difference_Report) Notebook for an early discussion.  
