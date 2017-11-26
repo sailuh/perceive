@@ -2,7 +2,7 @@
 title: "LDA Model Batch"
 author: "Carlos Paradis"
 date: "July 4, 2017"
-output:
+output:ins
   html_document:
     css: ~/OneDrive/Academia/Projects/inkCSS/res/css/style.css
     highlight: zenburn
@@ -18,10 +18,16 @@ The purpose of this notebook is to show the code necessary to execute multiple L
 The data used consist of either Seclist's Full Disclosure or BugTraq mailing list, as output by the crawler module, and as such contains for every e-mail reply body a single file. Alternatively, the corpus may use the Aggregation module / data to merge the files into thread files. There is no assumption on the individual file content, other than it reflect the content of the e-mail reply (future work will consider removing e-mail signatures and performing other non-token oriented pre-processing).
 
 ```{r Create LDA Model}
-source("../New LDA Models/lda_functions.R")
+source("~/Github/sail/perceive/Notebooks/LDA/lda_functions.R")
 
-fd.path <- "../Data/Full_Disclosure/2008/Body/"
-bt.path <- "/Users/carlos/Downloads/2012"
+#fd.path <- "../Data/Full_Disclosure/2008/Body/"
+#fd.path <- "/Users/carlos/Downloads/2013"
+#bt.path <- "/Users/carlos/Downloads/2012"
+#fd.path <- "/Users/carlos/Downloads/2013"
+#fd.path <- "/Users/carlos/Downloads/estepona_2013_tf_corpus"
+#fd.path <- "/Users/carlos/Desktop/2014"
+fd.path <- "~/Desktop/new_crawler_fd_corpus/2013.parsed"
+folder <- loadFiles(fd.path)
 ```
 
 # LDA 
@@ -29,19 +35,56 @@ bt.path <- "/Users/carlos/Downloads/2012"
 The VEM model is used, as implemented by Blei et al. Other models will be tested in a later stage. Model tunning is **not** performed in this notebook to showcase other ways to explore the data. Pre-processing parameters were discussed in an earlier stage of the research, but not exposed as parameters in model creation at this point, again, to simplify discussion and give room to the other functions available. As such, the choice of parameters here are simply k=10 for all months. 
 
 ```{r}
+set.seed(1234)
 models <- list()
-models[["Jan"]] <- rawToLDA(bt.path,10,"Jan")
-models[["Feb"]] <- rawToLDA(bt.path,10,"Feb")
-models[["Mar"]] <- rawToLDA(bt.path,10,"Mar")
-models[["Apr"]] <- rawToLDA(bt.path,10,"Apr")
-models[["May"]] <- rawToLDA(bt.path,10,"May")
-models[["Jun"]] <- rawToLDA(bt.path,10,"Jun")
-models[["Jul"]] <- rawToLDA(bt.path,10,"Jul")
-models[["Aug"]] <- rawToLDA(bt.path,10,"Aug")
-models[["Sep"]] <- rawToLDA(bt.path,10,"Sep")
-models[["Oct"]] <- rawToLDA(bt.path,10,"Oct")
-models[["Nov"]] <- rawToLDA(bt.path,10,"Nov")
-models[["Dec"]] <- rawToLDA(bt.path,10,"Dec")
+models[["Jan"]] <- rawToLDA(folder,10,"Jan")
+models[["Feb"]] <- rawToLDA(folder,10,"Feb")
+models[["Mar"]] <- rawToLDA(folder,10,"Mar")
+models[["Apr"]] <- rawToLDA(folder,10,"Apr")
+models[["May"]] <- rawToLDA(folder,10,"May")
+models[["Jun"]] <- rawToLDA(folder,10,"Jun")
+models[["Jul"]] <- rawToLDA(folder,10,"Jul")
+models[["Aug"]] <- rawToLDA(folder,10,"Aug")
+models[["Sep"]] <- rawToLDA(folder,10,"Sep")
+models[["Oct"]] <- rawToLDA(folder,10,"Oct")
+models[["Nov"]] <- rawToLDA(folder,10,"Nov")
+models[["Dec"]] <- rawToLDA(folder,10,"Dec")
+```
+
+```{r eval=FALSE}
+# Export Document Term Matrix
+
+names <- names(models)
+#path <- "~/Desktop/2012_dtm_k_10_12"
+path <- "~/Desktop/estepona_2014_k_10/Document_Topic_Matrix"
+exportLDAModelAux <- function(name,models,path){
+  lda.model <- models[[name]][["LDA"]]
+  doc.names <- models[[name]][["dfm"]]@docvars$doc_id
+  lda.model.posterior <- posterior(lda.model)
+  dtm <- lda.model.posterior$topics
+  path <- paste0(path,"/",name,".csv")
+  rownames(dtm) <- doc.names
+  
+  write.csv(dtm,path,row.names=TRUE)
+}
+lapply(names,exportLDAModelAux,models,path)
+```
+
+```{r eval=FALSE}
+# Export Topic Term Matrix
+
+names <- names(models)
+#path <- "~/Desktop/2012_ttm_k_10_12"
+path <- "~/Desktop/estepona_2014_k_10/Topic_Term_Matrix"
+exportLDAModelAux <- function(name,models,path){
+  lda.model <- models[[name]][["LDA"]]
+  lda.model.posterior <- posterior(lda.model)
+  dtm <- lda.model.posterior$terms
+  path <- paste0(path,"/",name,".csv")
+  write.csv(dtm,path,row.names=TRUE)
+}
+lapply(names,exportLDAModelAux,models,path)
+
 ```
 
 `models` is a named list after each month used to create a separate LDA model covering a single year. 
@@ -68,7 +111,7 @@ The visualization provides more information derived from the `topic-term-matrix`
 Additionally, we may also be interested in seeing how any one term is used across the corpus used for the specified month. For example, if the term `rpath` is of interest, we can inspect the documents, some of the content ocurring immediately before and after in it's original context, as so:
 
 ```{r}
-View(kwic(models[["May"]][["tokens"]],"rpath")) #see context for token u since it is one of the words chosen to represent the topic
+View(kwic(models[["May"]][["tokens"]],"vulnerability")) #see context for token u since it is one of the words chosen to represent the topic
 ```
 
 ## Document-Topic Matrix
@@ -103,11 +146,25 @@ It is important to note the presented table contain a few assumptions in it's co
 
 Let's first motivate the assumptions: In this notebook, every month was defined as 10 topics. For every pair of months we wish to compare their similarity against one another, a total of 100 rows is created with the associated similarity. Since we are considering 12 months in every topic flow table (as shown above), we would have a total of 10^12 rows, clearly making it very hard for manual inspection. 
 
-Instead, we resort again to a maximum likelehood approach: First, the January 10 topics is considered to be compared with the 10 topics of Febraury. Rather than showing 100 topics, we choose only those with the maximum likelehood similarity from Feb, as such, keeping the number of rows to 10, rather than 100 (note a shortcoming here occurs when other topics from Feb have similar similarity to the highest similarity topic, as discussed before). 
+Instead, we resort again to a maximum likelehood approach: 
 
-Now using the chosen topics of Feb (which may be repeated, as topics from Jan may have as maximum likelehood the same topic in Feb), these topics are compared against March 10 topics, and again the maximum likelehood is applied, so that 10 topics or less are selected. 
+First, the January 10 topics is considered to be compared with the 10 topics of Febraury. Rather than showing 100 topics, we choose only those with the maximum likelehood similarity from Feb, as such, keeping the number of rows to 10, rather than 100 (note a shortcoming here occurs when other topics from Feb have similar similarity to the highest similarity topic, as discussed before). 
 
-The same assumption is repeated until December.
+**Independendly**, we apply the same algorithm for **Feb_Mar**. Notice because of this, we consider all topics of Feb here on every row, and have on the Mar column only the maximum likelehood months of March. 
+
+Notice this looks apriori inconsistent: In **Jan_Feb** we only have the topics of **Feb** that were maximum likelehood for at least one topic of **Jan**. In turn, the **Feb_Mar** pair will contain **all topics of Feb**.
+
+We emphasize again the two pargraphs above indicate 2 **independent** operations: We could have calculated in parallel the maximimum likelehood between **Jan_Feb**, and **Feb_Mar**, and all the other pair of months if we wanted to speed up the operation. The "gluing" across all pair of months tables is done afterwards. 
+
+Understanding this operation as independent is important to understand how `NA`s are introduced in the table. A intuitive follow up to glue, for example, the **Jan_Feb** table and the **Feb_Mar** table would be a simple `inner join` through the **common month**, in this example **Feb**. However, we would miss the opportunity to observe **Emerging**, **Continuing**, **Ending** and **Standalone** topic types.
+
+The idea behind labeling topics as of different types is borrowed from Smith et al (2015), in their proposal of Topic Flow. In the original work, and here, the type labels are assigned to a Topic based on their connectivity between months. Because the topics are connected as cartesian products through probabilities, all topics a priori are connected to each other. It is only when we apply some heuristic to reason this "probabilisitic link" as "Yes/No" that types makes sense, or in other words, make the links deterministic. 
+
+In Smith et al. (2015), this is done using thresholds: A sliding bar is used to filter out all links that falls below a given threshold. In our approach, this happens through the maximum likelehood assumption: Topics in a follow-up month may not have links if none of the topics in the current month had it ocurring as highest similarity.
+
+As such, we can apply the same characterization here, by performing an **full outer join** in tables **Jan_Feb** and **Feb_Mar**. 
+ 
+ * **Continuing**: A topic
 
 The table used is a different approach than that used by Topic Flow visualization, also used by the project this notebook is part of.
 
@@ -139,6 +196,6 @@ write.csv(similarity,"~/Desktop/leximancer_FD_similarity_highest_likelehood_term
 Another option for visualizing the data is using word clouds, although the method doesn't provide much insight into the data when compared to the others presented in this notebook. It is only stated here for documentation purposes. 
 
 ```{r Plots, eval=FALSE}
-textplot_wordcloud(tfidf(dfm2), min.freq = 2000, random.order = FALSE,rot.per = 0,colors = RColorBrewer::brewer.pal(8,"Dark2"))
+textplot_wordcloud(tfidf(dfm2), min.freq = 2000, 1random.order = FALSE,rot.per = 0,colors = RColorBrewer::brewer.pal(8,"Dark2"))
 ```
 

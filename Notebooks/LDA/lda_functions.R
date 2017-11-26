@@ -234,20 +234,36 @@ CalculateHighestTopicCosineSimilarity <- function(ttm1,ttm2){
 ############# LDA Batch #################
 # Functions in this block encapsulate functions above to run an entire LDA model from raw data. 
 
+
+# Used to load the files into memory. Assume the format of the new crawler, where each year of
+# mailing list is inside a folder, and months inside sub-folders. 
+# See rawToLDA to see it's usage.
+loadFiles <- function(raw.corpus.folder.path){
+  #Load Required Functions
+  
+  #Load raw corpus from folder path.
+  folder <- readtext(paste0(raw.corpus.folder.path,"/**/*.reply.body.txt"),
+                     docvarsfrom = "filepaths"
+  )
+  # Update file names to remove folder name and extension
+  remove_prefix <- sapply(str_split(folder$doc_id,"/"),"[[",2)
+  remove_prefix_and_suffix <- sapply(str_split(remove_prefix,"[.]"),"[[",1)
+  folder$doc_id <- remove_prefix_and_suffix
+  
+  return(folder)
+}
+
+
 # Raw to LDA make several assumptions on pre-processing rules. See the lda notebook function for more details.
 #
 # Arguments
 # raw.corpus.folder.path: Path to the folder containing all raw data. 
 # k The number of topics k for the model. 
 # months A character vector containing the months of interest (currently one uses the first month)
-rawToLDA <- function(raw.corpus.folder.path,k,months){
+rawToLDA <- function(folder,k,months){
   s <- suppressPackageStartupMessages
   
-  #Load Required Functions
-  #source("../New LDA Models/lda_functions.R")
-  
-  #Load raw corpus from folder path.
-  folder <- readtext(raw.corpus.folder.path)
+
   
   #Subset in the folder containing all e-mail replies, the months of interest (leverages the fact the Month name is part of the file name)
   month <- months[1]
@@ -255,13 +271,13 @@ rawToLDA <- function(raw.corpus.folder.path,k,months){
   folder.month <- folder[is.document.from.month,]
   
   # Every e-mail reply is a document
-  corpus <- corpus(folder.month)
+  corpus <- corpus(x=folder.month)
   
   #2008_Feb_223.txt 2008_Feb_227.txt 2008_Feb_300.txt 
   #0                0                0 
   
   
-  # Tokenize. Several assumptions made ehre on pre-processing.
+  # Tokenize. Several assumptions made here on pre-processing.
   tokens <- tokens(corpus, what = "word", remove_numbers = FALSE, remove_punct = TRUE,
                    remove_symbols = TRUE, remove_separators = TRUE,
                    remove_twitter = FALSE, remove_hyphens = FALSE, remove_url = TRUE)
