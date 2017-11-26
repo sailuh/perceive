@@ -79,7 +79,7 @@ CalculateLDAModelsUpToN <-function(dfm,N){
 CalculateLDAModelsInKSet <-function(dfm,Ks,method="VEM"){
   #Returns a list, where every position is a created model. List of k values must be provided as a vector. 
   if(class(dfm)[1] == "dfmSparse"){ #Quanteda package, needs conversion to topicmodels
-    dfm <- convert(dfm, to = "topicmodels")
+    dfm <- convert(dfm, to = "topicmodels") # Note this conversion leads to loss of the document ids
   } 
   lda.vem <- list()
   Ks.size <- length(Ks)
@@ -249,6 +249,7 @@ loadFiles <- function(raw.corpus.folder.path){
   remove_prefix <- sapply(str_split(folder$doc_id,"/"),"[[",2)
   remove_prefix_and_suffix <- sapply(str_split(remove_prefix,"[.]"),"[[",1)
   folder$doc_id <- remove_prefix_and_suffix
+  rownames(folder) <- folder$doc_id
   
   return(folder)
 }

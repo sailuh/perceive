@@ -56,14 +56,12 @@ models[["Dec"]] <- rawToLDA(folder,10,"Dec")
 
 names <- names(models)
 #path <- "~/Desktop/2012_dtm_k_10_12"
-path <- "~/Desktop/estepona_2014_k_10/Document_Topic_Matrix"
+path <- "~/Desktop/lda_export/Document_Topic_Matrix"
 exportLDAModelAux <- function(name,models,path){
   lda.model <- models[[name]][["LDA"]]
-  doc.names <- models[[name]][["dfm"]]@docvars$doc_id
   lda.model.posterior <- posterior(lda.model)
   dtm <- lda.model.posterior$topics
   path <- paste0(path,"/",name,".csv")
-  rownames(dtm) <- doc.names
   
   write.csv(dtm,path,row.names=TRUE)
 }
@@ -75,7 +73,7 @@ lapply(names,exportLDAModelAux,models,path)
 
 names <- names(models)
 #path <- "~/Desktop/2012_ttm_k_10_12"
-path <- "~/Desktop/estepona_2014_k_10/Topic_Term_Matrix"
+path <- "~/Desktop/lda_export/Topic_Term_Matrix"
 exportLDAModelAux <- function(name,models,path){
   lda.model <- models[[name]][["LDA"]]
   lda.model.posterior <- posterior(lda.model)
@@ -127,7 +125,7 @@ GetDocumentsPerTopicCount(models[["May"]][["LDA"]])
 Or the name of the documents mapped to a specific topic to explore their content:
 
 ```{r}
-GetDocumentsAssignedToTopicK(models[["May"]][["LDA"]],5)
+GetDocumentsAssignedToTopicK(models[["Jun"]][["LDA"]],5)
   # Call quanteda library to mask View function if it doesn't show the table below on a browser
 ```
 
