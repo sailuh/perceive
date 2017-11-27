@@ -1,0 +1,63 @@
+---
+title: "Crawler Validation Matrix"
+author: Carlos Paradis
+output: html_notebook
+---
+
+# Introduction
+
+This is a very quickly done notebook just to create a table alike to http://seclists.org/bugtraq to verify the crawler download all e-mails. 
+
+```{r}
+library(data.table)
+```
+
+On MEGA, the .raw corpus is inside "New Crawler Full Disclosure" and "New Crawler Bugtraq".
+
+To test the **Crawler** works with this Notebook, **unzip** the **<year>.raw.zip** files from all years into a `corpus_folder`. This will create a folder for every year, and inside of it a folder for every month, and inside of it, a list of all e-mails as separate .txt files, and one extra index file necessary to extract the metadata in combination with the .txt files.
+
+See the table in the end and compare it to the one available in seclists. All numbers must match. 
+
+```{r}
+
+
+corpus_path <- "~/Desktop/corpus_folder" #you should unzip all different <year>.raw.zip into this folder.
+year_folders <- list.files (corpus_path)
+```
+
+```{r}
+counts <- array()
+month_paths <- array()
+
+for(i in 1:length(year_folders)){
+  year_folder_path <- paste0("~/Desktop/corpus_folder/",year_folders[i])
+  month_path <- list.files(year_folder_path)
+  month_paths <- c(month_paths,month_path)
+  
+  for (j in 1:length(month_path)){
+    file_paths <- paste0(year_folder_path,"/",month_path[j])
+    count <- length(list.files(file_paths)) - 1 #1 file is always the index in the crawler
+    counts <- c(counts,count)
+  }
+}
+month_paths <- month_paths[2:length(month_paths)]
+counts <- counts[2:length(counts)]
+month_paths
+```
+```{r}
+counts
+```
+
+
+```{r}
+year_range <- 2005:2016
+
+validation.matrix <- t(matrix(data=counts,nrow=length(year_range),ncol=12))
+colnames(validation.matrix) <- as.character(c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"))
+rownames(validation.matrix) <- year_range
+
+
+validation.matrix <- validation.matrix[ order(-as.numeric(row.names(validation.matrix))), ]
+validation.matrix
+```
+
