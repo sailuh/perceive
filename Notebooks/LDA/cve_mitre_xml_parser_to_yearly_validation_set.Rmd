@@ -1,0 +1,107 @@
+---
+title: "XML URL Parser from CVE Mitre"
+output: html_notebook
+---
+
+```{r}
+s <- suppressPackageStartupMessages
+library(xml2) #C xml parser library
+library(stringr)
+s(library(data.table))
+```
+
+Load xml data available on CVE Mitre, as well as define other necessary parameters for the rest of the notebook.
+
+```{r}
+xml <- read_xml("~/Downloads/cve_mitre_2008.xml")
+xml <- xml_ns_strip(xml)
+
+filter_tag <- "FULLDISC"
+filter_domain <- "seclists.org"
+savePath <- "~/Desktop/cve_validation_method/2008_validation_set.csv" # Please include the file and its extension
+```
+
+
+First, extract the table containing all vulnerabilities. 
+
+```{r}
+vulnerabilities <- xml_find_all(xml,xpath="/cvrfdoc/Vulnerability")
+```
+
+Next, define function to extract the URL, Tags, and Description for every vulnerability.
+
+```{r}
+extractCVEReferences <- function(vulnerability_node){
+  #print(xml_text(xml_find_all(vulnerability_node,".//Title"))) #Debug to show CVE-ID
+  if(length(xml_find_all(vulnerability_node,xpath="References")) == 0){
+    cve <- data.table(
+                        cve_id       = xml_text(xml_find_all(vulnerability_node,".//Title")),
+                        urls         = NA,
+                        descriptions = NA,
+                        tags         = NA
+                    )
+    
+    return (cve)
+  }
+  else{
+    cve <- data.table(
+                        cve_id       = xml_text(xml_find_all(vulnerability_node,".//Title")),
+                        urls         = xml_text(xml_find_all(vulnerability_node, ".//URL")),
+                        descriptions = xml_text(xml_find_all(vulnerability_node, ".//Description"))
+                    )
+    cve$tags <- sapply(str_split(cve$descriptions,":"),"[[",1)
+    return(cve)
+  }
+}
+```
+
+And apply to all vulnerabilities:
+
+
+```{r}
+#df <- do.call(rbind, sapply(vulnerabilities, extractCVEReferences))
+df <- extractCVEReferences(vulnerabilities[1])
+
+for(i in 2:length(vulnerabilities)){
+  df <- rbind(df,extractCVEReferences(vulnerabilities[i]))
+}
+class(df)
+```
+
+Despite being FULLDISC tag, not all point to seclists. This filter all the entries that are Full Disclosure and seclist domain. 
+
+```{r}
+domains <- sapply(str_split(df[tags==filter_tag]$urls,"/"),"[[",3)
+seclists <- df[tags == filter_tag][domains == filter_domain]
+seclists
+```
+
+Some issue ids may contain an additional 0 as prefix, and may or not contain the `.html` suffix. This is taken into account next while extracting the file ids:
+
+```{r}
+extract_file_names <- function(urls){
+  strings <- str_split(seclists$urls,"/")
+  
+  years <- sapply(strings,"[[",5)
+  months <- sapply(strings,"[[",6)
+  
+  
+  suffix <- sapply(strings,"[[",7)
+  relative_ids <- as.character(as.integer(sapply(str_split(suffix,"[.]"),"[[",1)))
+  
+  file_ids <- str_c(years,months,relative_ids,sep="_")
+  
+  return(file_ids)
+}
+
+seclists$file_id <- extract_file_names(urls)
+seclists <- seclists[,.(cve_id,file_id,tags,urls,descriptions)]
+seclists
+```
+
+Finally we save it! 
+
+```{r}
+fwrite(seclists,savePath)
+```
+
