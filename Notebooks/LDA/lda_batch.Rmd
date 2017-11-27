@@ -100,9 +100,10 @@ There are varying ways to explore topics. Out of the surveyed methods available,
 ## Topic-Term Matrix
 
 ```{r}
+#2013: Feb, Apr, Dec
 # To inspect a given topic use one of the following:
-plotLDAVis(models[["May"]],as.gist=FALSE)
-```
+plotLDAVis(models[["Jan"]],as.gist=FALSE)
+ ```
 
 The visualization provides more information derived from the `topic-term-matrix` output by LDA. 
 
@@ -125,7 +126,7 @@ GetDocumentsPerTopicCount(models[["May"]][["LDA"]])
 Or the name of the documents mapped to a specific topic to explore their content:
 
 ```{r}
-GetDocumentsAssignedToTopicK(models[["Jun"]][["LDA"]],5)
+GetDocumentsAssignedToTopicK(models[["Dec"]][["LDA"]],5)
   # Call quanteda library to mask View function if it doesn't show the table below on a browser
 ```
 
