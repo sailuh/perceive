@@ -9,7 +9,7 @@ PERCEIVE is a project incubator inspired by [Apache Incubator](http://incubator.
 | Crawlers and Corpus Parsers | A set of crawlers for data acquisition and parsers for different corpus setups intended for topic modelling.  | None                       | Pal Doshi, Karthik Jallawaram, Jarret Lee, Shashank Kava     | Carlos Paradis | Fall 2016, Fall 2017                           |
 | Graph Parsers               | Scripts to parse corpus and ontologies into graphs for network analysis                                       | Crawler and Corpus Parsers | Jeff Gerhard, Vignesh Rajan, Vaishnavi Vel    | Carlos Paradis | Spring 2017, Fall 2017                         |
 | Logger Website              | Website to survey and log user interaction of software vulnerabilities evaluation.                            | Crawler and Corpus Parsers | Karishma Ghiya                                | Carlos Paradis | Spring 2017                                    |
-| Data Storage                | Relational Data Models of Mitre's Software Vulnerabilities Ontologies, and Hadoop Ecosystem Case Study        | Crawler and Corpus Parsers | Kanoe Dudoit, Vinicius Gesteira, Yue Liu      | Carlos Paradis | Spring 2017, Fall 2017                         |
+| Data Storage                | Relational Data Models of Mitre's Software Vulnerabilities Ontologies, and Hadoop Ecosystem Case Study        | Crawler and Corpus Parsers | [Sanjna Srivatsa](http://mim.umd.edu/content/towards-vulnerability-knowledge-database-discourse-feature-extraction), Kanoe Dudoit, Vinicius Gesteira, Yue Liu      | Carlos Paradis | Spring 2017, Fall 2017                         |
 | Topic Flow                  | Pipeline for topic modeling, and topic flow                                                                   | Crawler and Corpus Parsers | Carlos Paradis                                | Rick Kazman    | Fall 2016, Spring 2017, Summer 2017, Fall 2017 |
 | Topic Viz                   | Fork of LDAvis R Package to visualize topics from LDA.                                                        | Topic Flow                 | Carlos Paradis                                | Rick Kazman    | Fall 2017                                      |
 | Topic Flow Viz              | Fork of Topic Flow Viz to visualize topic flows.                                                              | Topic Flow                 | Freddie Zhang                                 | Carlos Paradis | Fall 2017                                      |
@@ -29,7 +29,7 @@ If you would like to contribute (thanks!), we recommend you first open an issue 
 
 ## License
 
-Feel free to use this project code. Code dependencies are still being assessed to decide on a license.
+[GNU General Public License v2.0](LICENSE)
 
 ## How to cite 
 
